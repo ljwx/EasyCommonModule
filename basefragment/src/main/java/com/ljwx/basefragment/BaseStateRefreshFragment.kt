@@ -152,6 +152,14 @@ abstract class BaseStateRefreshFragment(@LayoutRes layoutResID: Int = R.layout.b
         stateLoadingDataSucceeded = true
     }
 
+    override fun showErrorStateInit(): Boolean {
+        if (!stateLoadingDataSucceeded) {
+            showStateError()
+            return true
+        }
+        return false
+    }
+
     open fun showStateContent() = showStateLayout(BaseLayoutStatus.CONTENT)
     open fun showStateEmpty() = showStateLayout(BaseLayoutStatus.EMPTY)
     open fun showStateLoading() = showStateLayout(BaseLayoutStatus.LOADING)

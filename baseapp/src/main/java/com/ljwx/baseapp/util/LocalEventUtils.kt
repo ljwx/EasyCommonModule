@@ -22,4 +22,8 @@ object LocalEventUtils {
         }
     }
 
+    fun sendAction() {
+
+    }
+
 }

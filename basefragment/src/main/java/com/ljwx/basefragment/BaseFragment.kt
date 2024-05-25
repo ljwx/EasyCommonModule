@@ -223,7 +223,7 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
         }
     }
 
-    override fun sendLocalEvent(action: String?, type: Long?) {
+    override fun sendLocalEvent(action: String?, type: Long?, value: String?) {
         LocalEventUtils.sendAction(action, type)
     }
 

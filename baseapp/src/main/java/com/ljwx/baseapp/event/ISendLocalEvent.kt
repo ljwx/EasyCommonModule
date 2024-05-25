@@ -2,6 +2,6 @@ package com.ljwx.baseapp.event
 
 interface ISendLocalEvent {
 
-    fun sendLocalEvent(action: String?, type: Long? = null)
+    fun sendLocalEvent(action: String?, type: Long? = null, value: String? = null)
 
 }
