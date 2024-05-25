@@ -34,4 +34,6 @@ interface IPageStateLayout {
 
     fun loadingStateInitComplete()
 
+    fun showErrorStateInit():Boolean
+
 }

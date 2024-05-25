@@ -7,7 +7,7 @@ interface IPageLocalEvent : ISendLocalEvent {
 
     fun registerLocalEvent(
         action: String?,
-        observer: (action: String, type: Long?, intent: Intent) -> Unit
+        observer: (action: String, type: Long?, value: String?, intent: Intent) -> Unit
     )
 
     fun unregisterLocalEvent(action: String?)

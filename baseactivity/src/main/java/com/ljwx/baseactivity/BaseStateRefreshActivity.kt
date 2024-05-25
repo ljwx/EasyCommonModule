@@ -127,6 +127,14 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
         stateLoadingDataSucceeded = true
     }
 
+    override fun showErrorStateInit(): Boolean {
+        if (!stateLoadingDataSucceeded) {
+            showStateError()
+            return true
+        }
+        return false
+    }
+
     /**
      * 显示布局状态
      *

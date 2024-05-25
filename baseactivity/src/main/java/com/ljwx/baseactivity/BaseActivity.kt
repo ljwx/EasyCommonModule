@@ -242,7 +242,7 @@ open class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.basea
      */
     override fun registerLocalEvent(
         action: String?,
-        observer: (action: String, type: Long?, intent: Intent) -> Unit
+        observer: (action: String, type: Long?, value:String?, intent: Intent) -> Unit
     ) {
         if (action == null) {
             return
@@ -255,7 +255,8 @@ open class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.basea
                     if (intentFilter.matchAction(it)) {
                         val type =
                             intent.getLongExtra(BaseConstBundleKey.LOCAL_EVENT_COMMON_TYPE, -1)
-                        observer(action, type, intent)
+                        val value = intent.getStringExtra(BaseConstBundleKey.LOCAL_EVENT_COMMON_VALUE)
+                        observer(action, type, value, intent)
                     }
                 }
             }
