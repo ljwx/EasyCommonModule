@@ -51,4 +51,8 @@ class BaseFragmentTest :
         }
     }
 
+    override fun onLoadData(type: Long) {
+        super.onLoadData(type)
+    }
+
 }

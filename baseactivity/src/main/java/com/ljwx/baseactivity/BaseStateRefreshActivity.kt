@@ -117,6 +117,16 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
         mStateLayout?.addClickListener(state, id, listener)
     }
 
+    override fun showLoadingStateInit() {
+        if (!stateLoadingDataSucceeded) {
+            showStateLoading()
+        }
+    }
+
+    override fun loadingStateInitComplete() {
+        stateLoadingDataSucceeded = true
+    }
+
     /**
      * 显示布局状态
      *

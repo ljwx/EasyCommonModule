@@ -30,4 +30,8 @@ interface IPageStateLayout {
         listener: View.OnClickListener
     )
 
+    fun showLoadingStateInit()
+
+    fun loadingStateInitComplete()
+
 }
