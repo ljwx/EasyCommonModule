@@ -1,0 +1,67 @@
+pluginManagement {
+    repositories {
+        maven { url "https://gitee.com/ezy/repo/raw/cosmo/"}
+        maven { setUrl("https://maven.aliyun.com/repository/central") }
+        maven { setUrl("https://maven.aliyun.com/repository/jcenter") }
+        maven { setUrl("https://maven.aliyun.com/repository/google") }
+        maven { setUrl("https://maven.aliyun.com/repository/gradle-plugin") }
+        maven { setUrl("https://maven.aliyun.com/repository/public") }
+        maven { setUrl("https://jitpack.io") }
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        maven { url "https://gitee.com/ezy/repo/raw/cosmo/"}
+        maven { setUrl("https://maven.aliyun.com/repository/central") }
+        maven { setUrl("https://maven.aliyun.com/repository/jcenter") }
+        maven { setUrl("https://maven.aliyun.com/repository/google") }
+        maven { setUrl("https://maven.aliyun.com/repository/gradle-plugin") }
+        maven { setUrl("https://maven.aliyun.com/repository/public") }
+        maven { setUrl("https://jitpack.io") }
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven {
+            url uri(new File(rootDir, "repo"))
+        }
+    }
+}
+rootProject.name = "NewBaseModule"
+include ':app'
+include ':baseapp'
+include ':baseactivity'
+include ':basefragment'
+include ':basenetwork'
+include ':baserecyclerview'
+include ':basetoolbar'
+include ':basescaffold'
+include ':baserefresh'
+include ':basestate'
+include ':baseview'
+include ':basedialog'
+include ':basemediaselector'
+include ':baseeventbus'
+include ':baseswitchenv'
+include ':baseleakcanary'
+include ':baseedittext'
+include ':basenotification'
+include ':baselogcheck'
+include ':baselanguage'
+include ':basescreenrecord'
+include ':baseresource'
+include ':basepermission'
+include ':baseutils'
+include ':sib'
+include ':baserouter'
+include ':provideacountinput'
+include ':recordcheck'
+include ':baseservice'
+include ':basedatabase'
+include ':provideclipboardauto'
+include ':othercodemao'
+include ':baseosdiff'
+include ':baseble'

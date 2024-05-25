@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="data"
+            type="String" />
+
+        <variable
+            name="click"
+            type="android.view.View.OnClickListener" />
+    </data>
+
+
+    <com.ljwx.basescaffold.QuickStateRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        app:qsrl_layout_model="none">
+
+        <com.ljwx.basetoolbar.CenterTitleBar
+            style="@style/base_toolbar_common"
+            app:title="二级页面" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/base_toolbar_height"
+            android:orientation="vertical"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            tools:context=".MainActivity">
+
+            <com.ljwx.baseedittext.StatusEditText
+                android:id="@+id/edit"
+                android:layout_width="match_parent"
+                android:enabled="true"
+                android:background="@drawable/selector_weather_test"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/memory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="申请内存" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/dp50"
+            android:text="跳转三级页面" />
+
+        <Button
+            android:id="@+id/task"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/dp100"
+            android:text="启动任务" />
+
+        <FrameLayout
+            android:id="@+id/fragment_container_test"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/global_test"
+            android:name="com.ljwx.basemodule.fragments.BaseFragmentTest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </com.ljwx.basescaffold.QuickStateRefreshLayout>
+</layout>

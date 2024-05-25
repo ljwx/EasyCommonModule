@@ -1,0 +1,89 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'maven-publish'
+}
+
+android {
+    namespace 'com.ljwx.basenetwork'
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 33
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.5.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.2"
+    api 'androidx.fragment:fragment-ktx:1.5.2'
+
+    // retrofit
+    def retrofit = "2.9.0"
+    api "com.squareup.retrofit2:retrofit:$retrofit"
+    // 必要依赖,解析json字符
+    api "com.squareup.retrofit2:converter-gson:$retrofit"
+    api "com.squareup.retrofit2:converter-moshi:$retrofit"
+    // 必要依赖,和rxjava结合必须用到
+    api "com.squareup.retrofit2:adapter-rxjava3:$retrofit"
+
+    //moshi
+    def moshi = "1.13.0"
+    implementation "com.squareup.moshi:moshi-kotlin:$moshi"
+    implementation "com.squareup.moshi:moshi-adapters:$moshi"
+    //gson
+    api 'com.google.code.gson:gson:2.10.1'
+
+    def okhttp = "4.10.0"
+    api "com.squareup.okhttp3:okhttp:$okhttp"
+    api "com.squareup.okhttp3:okhttp-urlconnection:$okhttp"
+    api "com.squareup.okhttp3:logging-interceptor:$okhttp"
+
+    //chucker
+    def chucker = "3.5.2"
+    debugImplementation "com.github.chuckerteam.chucker:library:$chucker"
+    releaseImplementation "com.github.chuckerteam.chucker:library-no-op:$chucker"
+
+    implementation project(path: ':baseapp')
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                // Applies the component for the release build variant.from components.release// You can then customize attributes of the publication as shown below.
+//                groupId = 'com.ljwx.basemodule'
+//                artifactId = 'network'
+//                version = '0.3.0'
+            }
+        }
+    }
+}

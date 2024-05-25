@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--QuickStateLayout布局id-->
+    <item name="base_scaffold_quick_state_refresh_layout" type="id" />
+    <!--重试按钮id-->
+    <item name="base_scaffold_state_retry_id" type="id" />
+</resources>
