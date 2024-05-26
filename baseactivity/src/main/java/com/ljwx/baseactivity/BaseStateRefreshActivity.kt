@@ -163,6 +163,8 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
     open fun showStateError() = showStateLayout(BaseLayoutStatus.ERROR)
     open fun showStateOffline() = showStateLayout(BaseLayoutStatus.OFFLINE)
     open fun showStateExtend() = showStateLayout(BaseLayoutStatus.EXTEND)
+    open fun showStateExtend2() = showStateLayout(BaseLayoutStatus.EXTEND2)
+    open fun showStateExtend3() = showStateLayout(BaseLayoutStatus.EXTEND3)
 
     /*================================================================*/
 

@@ -10,6 +10,8 @@ object BaseLayoutStatus {
     const val ERROR = 3
     const val OFFLINE = 4
     const val EXTEND = 5
+    const val EXTEND2 = 6
+    const val EXTEND3 = 7
 
     @IntDef(
         CONTENT,
@@ -18,6 +20,8 @@ object BaseLayoutStatus {
         ERROR,
         OFFLINE,
         EXTEND,
+        EXTEND2,
+        EXTEND3,
     )
     @Retention(AnnotationRetention.SOURCE)
     annotation class LayoutStatus

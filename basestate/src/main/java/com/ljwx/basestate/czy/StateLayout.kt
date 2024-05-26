@@ -75,6 +75,9 @@ open class StateLayout @JvmOverloads constructor(
             }
         }
 
+    private var extend2Layout: Int = NO_ID
+    private var extend3Layout: Int = NO_ID
+
     init {
         //viewpager切换的时候可能会导致崩溃
         //java.lang.IllegalStateException: Page(s) contain a ViewGroup with a LayoutTransition (or animateLayoutChanges="true"), which interferes with the scrolling animation. Make sure to call getLayoutTransition().setAnimateParentHierarchy(false) on all ViewGroups with a LayoutTransition before an animation is started.
@@ -105,6 +108,10 @@ open class StateLayout @JvmOverloads constructor(
                 attributes.getResourceId(R.styleable.StateLayout_stateLayoutOffline, NO_ID)
             extendLayout =
                 attributes.getResourceId(R.styleable.StateLayout_stateLayoutExtend, NO_ID)
+            extend2Layout =
+                attributes.getResourceId(R.styleable.StateLayout_stateLayoutExtend2, NO_ID)
+            extend3Layout =
+                attributes.getResourceId(R.styleable.StateLayout_stateLayoutExtend3, NO_ID)
         } finally {
             attributes.recycle()
         }
@@ -168,6 +175,8 @@ open class StateLayout @JvmOverloads constructor(
             BaseLayoutStatus.ERROR -> layout = errorLayout
             BaseLayoutStatus.OFFLINE -> layout = offlineLayout
             BaseLayoutStatus.EXTEND -> layout = extendLayout
+            BaseLayoutStatus.EXTEND2 -> layout = extend2Layout
+            BaseLayoutStatus.EXTEND3 -> layout = extend3Layout
         }
         if (layout == null) {
             showStateContent()
@@ -194,6 +203,8 @@ open class StateLayout @JvmOverloads constructor(
             BaseLayoutStatus.ERROR -> layout = errorLayout
             BaseLayoutStatus.OFFLINE -> layout = offlineLayout
             BaseLayoutStatus.EXTEND -> layout = extendLayout
+            BaseLayoutStatus.EXTEND2 -> layout = extend2Layout
+            BaseLayoutStatus.EXTEND3 -> layout = extend3Layout
         }
         if (layout != null) {
             getOrCreate(state) {

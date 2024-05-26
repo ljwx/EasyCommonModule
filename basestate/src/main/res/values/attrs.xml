@@ -6,5 +6,7 @@
         <attr name="stateLayoutError" format="reference" />
         <attr name="stateLayoutOffline" format="reference" />
         <attr name="stateLayoutExtend" format="reference" />
+        <attr name="stateLayoutExtend2" format="reference" />
+        <attr name="stateLayoutExtend3" format="reference" />
     </declare-styleable>
 </resources>
