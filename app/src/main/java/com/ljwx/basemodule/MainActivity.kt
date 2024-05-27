@@ -51,7 +51,7 @@ class MainActivity :
             startForegroundService(Intent(this, TestForegroundService::class.java))
         }
 
-        registerLocalEvent("refresh") { action, type, intent ->
+        registerLocalEvent("refresh") { action, type, value, intent ->
             Log.d("事件", "接收到刷新事件")
         }
         sendLocalEvent("refresh")
