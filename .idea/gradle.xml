@@ -4,17 +4,16 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="testRunner" value="GRADLE" />
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleHome" value="$PROJECT_DIR$/../../Gradle/gradle-6.5-bin/gradle-6.5" />
-        <option name="gradleJvm" value="jbr-17" />
+        <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/baseactivity" />
             <option value="$PROJECT_DIR$/baseapp" />
+            <option value="$PROJECT_DIR$/baseble" />
             <option value="$PROJECT_DIR$/basedatabase" />
             <option value="$PROJECT_DIR$/basedialog" />
             <option value="$PROJECT_DIR$/baseedittext" />
@@ -26,6 +25,7 @@
             <option value="$PROJECT_DIR$/basemediaselector" />
             <option value="$PROJECT_DIR$/basenetwork" />
             <option value="$PROJECT_DIR$/basenotification" />
+            <option value="$PROJECT_DIR$/baseosdiff" />
             <option value="$PROJECT_DIR$/basepermission" />
             <option value="$PROJECT_DIR$/baserecyclerview" />
             <option value="$PROJECT_DIR$/baserefresh" />
@@ -39,14 +39,15 @@
             <option value="$PROJECT_DIR$/basetoolbar" />
             <option value="$PROJECT_DIR$/baseutils" />
             <option value="$PROJECT_DIR$/baseview" />
+            <option value="$PROJECT_DIR$/othercodemao" />
             <option value="$PROJECT_DIR$/provideacountinput" />
             <option value="$PROJECT_DIR$/provideclipboardauto" />
             <option value="$PROJECT_DIR$/recordcheck" />
             <option value="$PROJECT_DIR$/sib" />
           </set>
         </option>
+        <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
-    <option name="offlineMode" value="true" />
   </component>
 </project>
