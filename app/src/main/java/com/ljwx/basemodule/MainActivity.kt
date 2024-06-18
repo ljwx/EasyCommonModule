@@ -34,7 +34,8 @@ class MainActivity :
 
         super.onCreate(savedInstanceState)
         addTabFragment("staterefresh", StateRefreshFragment())
-        addTabFragment("basefragment", BaseFragmentTest())
+//        addTabFragment("basefragment", BaseFragmentTest())
+        addTabFragment("mediaPlayer", MediaPlayerTestFragment())
 //        addTabFragment("mvvmFragment", LoginFragment())
 //        addTabFragment("toolbar", BaseToolbarFragment())
         addTabFragment("loadmore", LoadMoreFragment())

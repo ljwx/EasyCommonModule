@@ -7,34 +7,76 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 
-class LjwxMediaPlayer(private val context: Context) {
+class LjwxMediaPlayer(
+    private val context: Context,
+    private val cachePath: String? = null,
+    private val cacheSize: Long? = null
+) {
 
 //    companion object {
 //
-//        private val player by lazy { LjwxMediaPlayer() }
+//        private lateinit var context: Context
+//        private var cachePath: String? = null
+//        private var cacheSize: Long? = null
+//        private val instance by lazy { LjwxMediaPlayer(context, cachePath, cacheSize) }
 //
-//        fun getSinglePlayer(): LjwxMediaPlayer {
-//            return player
+//        fun setInstanceInit(
+//            context: Context,
+//            cachePath: String? = null,
+//            cacheSize: Long? = null
+//        ): Companion {
+//            this.context = context
+//            this.cachePath = cachePath
+//            this.cacheSize = cacheSize
+//            return this
 //        }
+//
+//        fun getInstance(): LjwxMediaPlayer {
+//            return instance
+//        }
+//
 //    }
 
     private val TAG = "basemediaplayer"
 
     private var player: Player? = null
-    fun getPlayer(): Player {
-        return player ?: ExoPlayer.Builder(context).build().apply {
-            // 设置重复模式
-            // Player.REPEAT_MODE_ALL 无限重复
-            // Player.REPEAT_MODE_ONE 重复一次
-            // Player.REPEAT_MODE_OFF 不重复
-            repeatMode = Player.REPEAT_MODE_OFF
-            // 设置当缓冲完毕后直接播放视频
-            playWhenReady = true
-        }
+
+    init {
+        initPlayer()
     }
 
-    fun addListener(player: Player, listener: LjwxMediaPlayerListener) {
-        player.addListener(object : Player.Listener {
+    private fun initPlayer(): Player {
+        if (player == null) {
+            val builder = ExoPlayer.Builder(context)
+            builder.apply {
+                if (!cachePath.isNullOrEmpty()) {
+                    setMediaSourceFactory(
+                        LjwxMediaCache.Builder(context).setCachePath(cachePath)
+                            .setCacheSize(cacheSize).build()
+                    )
+                }
+            }
+            val build = builder.build()
+            build.apply {
+                // 设置重复模式
+                // Player.REPEAT_MODE_ALL 无限重复
+                // Player.REPEAT_MODE_ONE 重复一次
+                // Player.REPEAT_MODE_OFF 不重复
+                repeatMode = Player.REPEAT_MODE_OFF
+                // 设置当缓冲完毕后直接播放视频
+                playWhenReady = false
+            }
+            player = build
+        }
+        return player!!
+    }
+
+    fun getPlayer(): Player {
+        return initPlayer()
+    }
+
+    fun addListener(listener: LjwxMediaPlayerListener) {
+        player?.addListener(object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 super.onIsPlayingChanged(isPlaying)
                 if (isPlaying) {
@@ -77,7 +119,10 @@ class LjwxMediaPlayer(private val context: Context) {
             override fun onPlayerError(error: PlaybackException) {
                 super.onPlayerError(error)
                 // 获取播放错误信息
-                listener.onStateChange(PlayerStates.STATE_PLAY_ERROR, "播放出错:" + error.message)
+                listener.onStateChange(
+                    PlayerStates.STATE_PLAY_ERROR,
+                    "播放出错,code:" + error.errorCode + "," + error.message
+                )
                 Log.d(TAG, "播放出错:" + error.message)
             }
 
@@ -88,7 +133,13 @@ class LjwxMediaPlayer(private val context: Context) {
         player?.prepare()
     }
 
-    fun startPlay() {
+    fun startPlay(path: String? = null, prepare: Boolean = true) {
+        path?.let {
+            resetMediaItem(path)
+        }
+        if (prepare) {
+            player?.prepare()
+        }
         player?.play()
     }
 

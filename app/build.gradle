@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace 'com.ljwx.basemodule'
-    compileSdk 33
+    compileSdk 34
 
     signingConfigs {
         debug {

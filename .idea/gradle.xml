@@ -22,6 +22,7 @@
             <option value="$PROJECT_DIR$/baselanguage" />
             <option value="$PROJECT_DIR$/baseleakcanary" />
             <option value="$PROJECT_DIR$/baselogcheck" />
+            <option value="$PROJECT_DIR$/basemediaplayer" />
             <option value="$PROJECT_DIR$/basemediaselector" />
             <option value="$PROJECT_DIR$/basenetwork" />
             <option value="$PROJECT_DIR$/basenotification" />
