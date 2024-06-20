@@ -137,12 +137,25 @@ class LjwxMediaPlayer(
                 Log.d(TAG, "播放出错:" + error.message)
             }
 
+            override fun onPositionDiscontinuity(
+                oldPosition: Player.PositionInfo,
+                newPosition: Player.PositionInfo,
+                reason: Int
+            ) {
+                super.onPositionDiscontinuity(oldPosition, newPosition, reason)
+                //进度改变
+            }
+
         }
         player?.addListener(exoListener!!)
     }
 
     fun prepare() {
         player?.prepare()
+    }
+
+    fun isPlaying(): Boolean {
+        return player?.isPlaying == true
     }
 
     fun startPlay(path: String? = null, prepare: Boolean = true) {
