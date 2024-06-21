@@ -9,5 +9,6 @@ object PlayerStates {
     const val STATE_IS_PLAYING = 5
     const val STATE_NOT_PLAYING = 6
     const val STATE_PLAY_ERROR = 7
+    const val STATE_PLAY_START = 8
 
 }

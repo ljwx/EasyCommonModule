@@ -103,25 +103,29 @@ class LjwxMediaPlayer(
                 when (playbackState) {
                     Player.STATE_IDLE -> {
                         //播放器停止时的状态
-                        listener?.onStateChange(PlayerStates.STATE_IDLE, "已停止")
+                        listener.onStateChange(PlayerStates.STATE_IDLE, "已停止")
                         Log.d(TAG, "播放停止")
                     }
 
                     Player.STATE_BUFFERING -> {
                         // 正在缓冲数据
-                        listener?.onStateChange(PlayerStates.STATE_BUFFERING, "正在缓冲数据")
+                        listener.onStateChange(PlayerStates.STATE_BUFFERING, "正在缓冲数据")
                         Log.d(TAG, "正在缓冲数据")
                     }
 
                     Player.STATE_READY -> {
                         // 可以开始播放
-                        listener?.onStateChange(PlayerStates.STATE_READY, "可以开始播放")
+                        if (player?.playWhenReady == true) {
+                            listener.onStateChange(PlayerStates.STATE_PLAY_START, "开始播放")
+                        } else {
+                            listener.onStateChange(PlayerStates.STATE_READY, "可以开始播放")
+                        }
                         Log.d(TAG, "可以开始播放")
                     }
 
                     Player.STATE_ENDED -> {
                         // 播放结束
-                        listener?.onStateChange(PlayerStates.STATE_ENDED, "播放结束")
+                        listener.onStateChange(PlayerStates.STATE_ENDED, "播放结束")
                         Log.d(TAG, "播放结束")
                     }
                 }
@@ -130,7 +134,7 @@ class LjwxMediaPlayer(
             override fun onPlayerError(error: PlaybackException) {
                 super.onPlayerError(error)
                 // 获取播放错误信息
-                listener?.onStateChange(
+                listener.onStateChange(
                     PlayerStates.STATE_PLAY_ERROR,
                     "播放出错,code:" + error.errorCode + "," + error.message
                 )
