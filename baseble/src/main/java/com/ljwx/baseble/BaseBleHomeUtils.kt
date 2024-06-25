@@ -13,16 +13,21 @@ import android.provider.Settings
 
 object BaseBleHomeUtils {
 
+    private var context: Context? = null
     private val REQUEST_LOCATION_PERMISSION = 1
     private var adapter: BluetoothAdapter? = null
 
-    fun hasBle(context: Context): Boolean {
-        return context.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)
+    fun init(context: Context) {
+        this.context = context
     }
 
-    private fun getAdapter(context: Context): BluetoothAdapter {
+    fun hasBle(): Boolean {
+        return context?.packageManager?.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE) == true
+    }
+
+    fun getAdapter(): BluetoothAdapter? {
         return adapter
-            ?: (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
+            ?: (context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)?.adapter
     }
 
     fun isBleEnable(): Boolean {

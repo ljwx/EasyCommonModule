@@ -103,6 +103,7 @@ dependencies {
     implementation project(path: ':baseservice')
     implementation project(path: ':provideclipboardauto')
     implementation project(path: ':basemediaplayer')
+    implementation project(path: ':baseble')
 
     implementation 'io.github.ljwx:SplitTextView:0.3.8'
 

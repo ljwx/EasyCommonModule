@@ -33,7 +33,8 @@ class MainActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        addTabFragment("staterefresh", StateRefreshFragment())
+        addTabFragment("ble", BleTestFragment())
+//        addTabFragment("staterefresh", StateRefreshFragment())
 //        addTabFragment("basefragment", BaseFragmentTest())
         addTabFragment("mediaPlayer", MediaPlayerTestFragment())
 //        addTabFragment("mvvmFragment", LoginFragment())

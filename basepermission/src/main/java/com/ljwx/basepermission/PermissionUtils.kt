@@ -1,49 +1,17 @@
-package com.ljwx.baseble
+package com.ljwx.basepermission
 
-import android.Manifest
 import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.LocationManager
-import android.os.Build
-import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
+object PermissionUtils {
 
-object BaseBlePermissionUtils {
-
-    private val mPermissionList = ArrayList<String>()
-
-    private fun getPermissions(): Array<String> {
-        val permissionList = ArrayList<String>()
-        // Android 版本大于等于 12 时，申请新的蓝牙权限
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            permissionList.add(Manifest.permission.BLUETOOTH_SCAN);
-            permissionList.add(Manifest.permission.BLUETOOTH_ADVERTISE);
-            permissionList.add(Manifest.permission.BLUETOOTH_CONNECT);
-            //根据实际需要申请定位权限
-//            mPermissionList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-//            mPermissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        } else {
-            //Android 6.0开始 需要定位权限
-            permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
-            permissionList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-        }
-        return mPermissionList.toTypedArray()
-    }
-
-    fun permissionsGranted(context: Context): Boolean {
-        var hasPermission = false
-        getPermissions().forEach {
-            val permissionCheck = ContextCompat.checkSelfPermission(context, it)
-            hasPermission = permissionCheck == PackageManager.PERMISSION_GRANTED
-        }
-        return hasPermission
-    }
+    const val PERMISSION_GRANTED = 0
+    const val PERMISSION_DENIED = -1
+    const val PERMISSION_EXPLAIN = 1
 
     fun checkPermission(activity: Activity, permission: String): Int {
         // 检查权限状态
@@ -52,13 +20,13 @@ object BaseBlePermissionUtils {
                 permission
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            return BaseBleConst.PERMISSION_GRANTED
+            return PERMISSION_GRANTED
         } else if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
             // 需要向用户解释为什么需要这个权限
-            return BaseBleConst.PERMISSION_EXPLAIN
+            return PERMISSION_EXPLAIN
         } else {
             // 请求权限
-            return BaseBleConst.PERMISSION_DENIED
+            return PERMISSION_DENIED
         }
     }
 

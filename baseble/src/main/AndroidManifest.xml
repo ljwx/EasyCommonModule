@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!--蓝牙权限-->
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+<!--    <uses-permission android:name="android.permission.BLUETOOTH" />-->
+<!--    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />-->
     <!-- LE Beacons位置相关权限-->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+<!--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
+<!--    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
     <!--蓝牙模块 设置为true表示只有支持蓝牙的手机才能安装-->
-    <uses-feature
-        android:name="android.hardware.bluetooth_le"
-        android:required="true" />
+<!--    <uses-feature-->
+<!--        android:name="android.hardware.bluetooth_le"-->
+<!--        android:required="true" />-->
 
     <!--蓝牙权限--><!--对于旧版蓝牙相关的权限声明，请将 android:maxSdkVersion 设为 30-->
     <uses-permission
@@ -28,8 +28,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" /><!--如果您的应用使当前设备可被其他蓝牙设备检测到-->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /><!--如果您的应用与已配对的蓝牙设备通信-->
     <!--使用蓝牙低功耗BLE-->
-    <uses-feature
-        android:name="android.hardware.bluetooth_le"
-        android:required="false" />
+<!--    <uses-feature-->
+<!--        android:name="android.hardware.bluetooth_le"-->
+<!--        android:required="false" />-->
 
 </manifest>
