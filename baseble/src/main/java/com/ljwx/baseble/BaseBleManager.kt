@@ -1,5 +1,6 @@
 package com.ljwx.baseble
 
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.content.Context
@@ -9,6 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 class BaseBleManager private constructor() {
 
     private var context: Context? = null
+
+    private var stateListener: BleStateListener? = null
+    private var stateListener2: BleStateListener? = null
+    private var stateListener3: BleStateListener? = null
 
     companion object {
 
@@ -21,8 +26,7 @@ class BaseBleManager private constructor() {
 
     fun init(context: Context) {
         this.context = context
-        BaseBleHomeUtils.init(context)
-        BaseBleScanUtils.init(BaseBleHomeUtils.getAdapter())
+        BaseBleScanUtils.init(BaseBleHomeUtils.getAdapter(context))
     }
 
     fun checkPermission(): Boolean {
@@ -59,7 +63,8 @@ class BaseBleManager private constructor() {
                 val deviceName = device.name;
                 if (!deviceName.isNullOrEmpty()) {
                     //添加设备到列表
-                    Log.d("蓝牙扫描结果", "设备名：$deviceName")
+                    Log.d("蓝牙扫描结果", "设备名:$deviceName")
+                    stateListener?.stateChange(BaseBleConst.STATE_SCAN_RESULT, deviceName, device)
                 }
             }
 
@@ -78,8 +83,31 @@ class BaseBleManager private constructor() {
         BaseBleScanUtils.stopScan()
     }
 
-    fun connect(id: String) {
-        BaseBleConnectUtils
+    fun connect(context: Context, device: BluetoothDevice?, autoConnect: Boolean) {
+        BaseBleConnectUtils.connectGATT(context, device, autoConnect, stateListener)
+    }
+
+    fun addStateListener(listener: BleStateListener) {
+        stateListener = listener
+    }
+
+    fun addStateListener2(listener: BleStateListener) {
+        stateListener2 = listener
+    }
+
+    fun addStateListener3(listener: BleStateListener) {
+        stateListener3 = listener
+    }
+
+    interface BleStateListener {
+
+        fun stateChange(
+            code: Int,
+            message: String,
+            device: BluetoothDevice? = null,
+            data: Any? = null
+        )
+
     }
 
 }

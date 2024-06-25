@@ -26,8 +26,8 @@ object BaseBlePermissionUtils {
             permissionList.add(Manifest.permission.BLUETOOTH_ADVERTISE);
             permissionList.add(Manifest.permission.BLUETOOTH_CONNECT);
             //根据实际需要申请定位权限
-//            mPermissionList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-//            mPermissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
+            mPermissionList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+            mPermissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
         } else {
             //Android 6.0开始 需要定位权限
             permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -82,7 +82,6 @@ object BaseBlePermissionUtils {
 
     fun requestMultiple(
         activity: AppCompatActivity,
-        permission: Array<String>,
         permissionResult: (item: Map.Entry<String, Boolean>) -> Unit
     ) {
         val requestPermissionLauncher = activity.registerForActivityResult(
@@ -99,7 +98,7 @@ object BaseBlePermissionUtils {
                 }
             }
         }
-        requestPermissionLauncher.launch(permission)
+        requestPermissionLauncher.launch(getPermissions())
     }
 
 }

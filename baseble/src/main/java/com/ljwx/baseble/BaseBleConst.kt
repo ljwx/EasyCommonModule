@@ -13,4 +13,9 @@ object BaseBleConst {
     const val CONDITION_BLE_ENABLE = 20002
     const val CONDITION_LOCATION_ENABLE = 20003
 
+    const val STATE_SCAN_RESULT = 30001
+    const val STATE_CONNECT_SUCCESS = 30002
+    const val STATE_CONNECT_TIMEOUT = 30003
+    const val STATE_DISCONNECT = 30004
+    const val STATE_SERVICES_DISCOVERED = 30005
 }

@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
+import android.util.Log
 
 object BaseBleScanUtils {
 
@@ -31,6 +32,7 @@ object BaseBleScanUtils {
 
     @SuppressLint("MissingPermission")
     fun stopScan() {
+        Log.d("蓝牙扫描", "停止扫描")
         scanner?.stopScan(scanCallback)
     }
 
