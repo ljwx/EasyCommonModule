@@ -62,6 +62,10 @@ object BaseBlePermissionUtils {
         }
     }
 
+    fun requestOld(activity: Activity) {
+        ActivityCompat.requestPermissions(activity, getPermissions(), 1)
+    }
+
     fun requestSingle(
         activity: AppCompatActivity,
         permission: String,
