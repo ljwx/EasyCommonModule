@@ -6,10 +6,12 @@ import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattDescriptor
+import android.bluetooth.BluetoothGattService
 import android.content.Context
 import android.os.Build
 import android.util.Log
 import java.util.ArrayList
+import java.util.HashMap
 import java.util.UUID
 
 
@@ -20,6 +22,13 @@ object BaseBleConnectUtils {
     private var mBluetoothGatt: BluetoothGatt? = null
 
     private var listener: BaseBleManager.BleStateListener? = null
+
+    var serverList = ArrayList<UUIDInfo>()
+    var readCharaMap = HashMap<String, ArrayList<UUIDInfo>>()
+    var writeCharaMap = HashMap<String, ArrayList<UUIDInfo>>()
+    private var selectServer: UUIDInfo? = null
+    private var selectWrite: UUIDInfo? = null
+    private var selectRead: UUIDInfo? = null
 
     private val mBluetoothGattCallback = object : BluetoothGattCallback() {
 
@@ -63,27 +72,111 @@ object BaseBleConnectUtils {
 //                bleGattDescriptor?.value = BluetoothGattDescriptor.ENABLE_INDICATION_VALUE
 //                gatt?.writeDescriptor(bleGattDescriptor)
 
-
+                serverList.clear()
+                readCharaMap.clear()
+                writeCharaMap.clear()
+                var notify: Triple<UUID, UUID, UUID>? = null
                 //获取服务列表
-                val service = gatt.services.map { it.uuid }
-                for (service in gatt.services) {
-                    service.characteristics.forEach {
-                        if ((it.properties and BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
-
+                gatt.services.forEach { server ->
+                    val serverInfo = UUIDInfo(server.uuid)
+                    serverInfo.strCharactInfo = "[Server]"
+                    serverList.add(serverInfo)
+                    val readArray = ArrayList<UUIDInfo>()
+                    val writeArray = ArrayList<UUIDInfo>()
+                    server.characteristics.forEach { character ->
+                        val charaProp = character.properties
+                        var isRead = false
+                        var isWrite = false
+                        // 具备读的特征
+                        var strReadCharactInfo = ""
+                        // 具备写的特征
+                        var strWriteCharactInfo = ""
+                        if (charaProp and BluetoothGattCharacteristic.PROPERTY_READ > 0) {
+                            isRead = true
+                            strReadCharactInfo += "[PROPERTY_READ]"
+                            if (character.descriptors.size > 0) {
+                                serverInfo.descriptor = character.descriptors[0]
+                                Log.d(TAG, "1有desc:" + serverInfo.descriptor?.uuid)
+                            }
+                            Log.e(
+                                TAG,
+                                "read_chara=" + character.uuid + "----read_service=" + server.uuid
+                            )
                         }
+                        if (charaProp and BluetoothGattCharacteristic.PROPERTY_WRITE > 0) {
+                            isWrite = true
+                            strWriteCharactInfo += "[PROPERTY_WRITE]"
+                            if (character.descriptors.size > 0) {
+                                serverInfo.descriptor = character.descriptors[0]
+                                Log.d(TAG, "2有desc:" + serverInfo.descriptor?.uuid)
+                            }
+                            Log.e(
+                                TAG,
+                                "write_chara=" + character.uuid + "----write_service=" + server.uuid
+                            )
+                        }
+                        if (charaProp and BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE > 0) {
+                            isWrite = true
+                            strWriteCharactInfo += "[PROPERTY_WRITE_NO_RESPONSE]"
+                            if (character.descriptors.size > 0) {
+                                serverInfo.descriptor = character.descriptors[0]
+                                Log.d(TAG, "3有desc:" + serverInfo.descriptor?.uuid)
+                            }
+                            Log.e(
+                                TAG,
+                                "write_chara=" + character.uuid + "----write_service=" + server.uuid
+                            )
+                        }
+                        if (charaProp and BluetoothGattCharacteristic.PROPERTY_NOTIFY > 0) {
+                            isRead = true
+                            strReadCharactInfo += "[PROPERTY_NOTIFY]"
+                            if (character.descriptors.size > 0) {
+                                serverInfo.descriptor = character.descriptors[0]
+                                Log.d(TAG, "4有desc:" + serverInfo.descriptor?.uuid)
+                            }
+                            Log.e(
+                                TAG,
+                                "notify_chara=" + character.uuid + "----notify_service=" + server.uuid
+                            )
+                        }
+                        if (charaProp and BluetoothGattCharacteristic.PROPERTY_INDICATE > 0) {
+                            isRead = true
+                            strReadCharactInfo += "[PROPERTY_INDICATE]"
+                            if (character.descriptors.size > 0) {
+                                serverInfo.descriptor = character.descriptors[0]
+                                Log.d(TAG, "5有desc:" + serverInfo.descriptor?.uuid)
+                            }
+                            Log.e(
+                                TAG,
+                                "indicate_chara=" + character.uuid + "----indicate_service=" + server.uuid
+                            )
+                        }
+                        if (isRead) {
+                            val uuidInfo = UUIDInfo(character.uuid)
+                            uuidInfo.strCharactInfo = strReadCharactInfo
+                            uuidInfo.bluetoothGattCharacteristic = character
+                            readArray.add(uuidInfo)
+                        }
+                        if (isWrite) {
+                            val uuidInfo = UUIDInfo(character.uuid)
+                            uuidInfo.strCharactInfo = strWriteCharactInfo
+                            uuidInfo.bluetoothGattCharacteristic = character
+                            writeArray.add(uuidInfo)
+                        }
+                        readCharaMap.put(server.uuid.toString(), readArray)
+                        writeCharaMap.put(server.uuid.toString(), writeArray)
                     }
-                    if (service.characteristics.size > 1) {
-                        val ser = service.uuid.toString()
-                        val read = service.characteristics[0].uuid.toString()
-//                        val readDes = service.characteristics[0].descriptors[0].uuid.toString()
-                        val write = service.characteristics[1].uuid.toString()
-                        BaseBleCommunicationUtils.setUUIDName(ser, read, write, "BluetoothGattCallback")
+                    if (notify == null) {
                     }
+                    notify = getReadNotify(server)
                 }
                 listener?.stateChange(
                     BaseBleConst.STATE_SERVICES_DISCOVERED,
                     "onServicesDiscovered"
                 )
+                notify?.apply {
+                    BaseBleCommunicationUtils.enableNotifications(gatt, first, second, third)
+                }
             } else {
                 listener?.stateChange(
                     BaseBleConst.STATE_SERVICES_DISCOVERED_OTHER,
@@ -91,6 +184,21 @@ object BaseBleConnectUtils {
                 )
             }
 
+        }
+
+        private fun getReadNotify(service: BluetoothGattService): Triple<UUID, UUID, UUID>? {
+            var result: Triple<UUID, UUID, UUID>? = null
+            for (characteristic in service.characteristics) {
+                val properties = characteristic.properties
+                if (properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY > 0) {
+                    if (characteristic.descriptors.size > 0) {
+                        val uuid = characteristic.descriptors[0].uuid
+                        result = Triple(service.uuid, characteristic.uuid, uuid)
+                        return result
+                    }
+                }
+            }
+            return result
         }
 
         override fun onCharacteristicWrite(
@@ -166,7 +274,6 @@ object BaseBleConnectUtils {
             super.onMtuChanged(gatt, mtu, status)
             Log.d("蓝牙", "onMtuChanged:" + mtu)
         }
-
 
 
     }

@@ -115,10 +115,10 @@ class BleTestFragment :
                         devices.clear()
                     }
                     BaseBleConst.STATE_SERVICES_DISCOVERED -> {
-                        val read = BaseBleManager.getInstance().read()
-                        Log.d("蓝牙", "读是否成功：$read")
-                        val write = BaseBleManager.getInstance().write()
-                        Log.d("蓝牙", "写是否成功：$write")
+//                        val read = BaseBleManager.getInstance().read()
+//                        Log.d("蓝牙", "读是否成功：$read")
+//                        val write = BaseBleManager.getInstance().write()
+//                        Log.d("蓝牙", "写是否成功：$write")
                     }
                 }
             }
