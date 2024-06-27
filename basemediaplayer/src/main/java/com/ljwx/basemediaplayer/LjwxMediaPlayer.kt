@@ -9,8 +9,9 @@ import androidx.media3.exoplayer.ExoPlayer
 
 class LjwxMediaPlayer(
     private val context: Context,
-    private val cachePath: String? = null,
-    private val cacheSize: Long? = null
+    private val fileName: String? = null,
+    private val cachePath: String = context.cacheDir.path + "/media_cache/" + fileName,
+    private val cacheSize: Long = 1024 * 1024 * 40L
 ) {
 
 //    companion object {
@@ -47,15 +48,19 @@ class LjwxMediaPlayer(
         initPlayer()
     }
 
+    private fun enableCache(): Boolean {
+        return !fileName.isNullOrEmpty()
+    }
+
     private fun initPlayer(): Player {
         if (player == null) {
             val builder = ExoPlayer.Builder(context)
             builder.apply {
-                if (!cachePath.isNullOrEmpty()) {
-                    setMediaSourceFactory(
-                        LjwxMediaCache.Builder(context).setCachePath(cachePath)
-                            .setCacheSize(cacheSize).build()
-                    )
+                if (enableCache()) {
+                    LjwxMediaCache.Builder(context).setCachePath(cachePath)
+                        .setCacheSize(cacheSize).build()?.let {
+                            setMediaSourceFactory(it)
+                        }
                 }
             }
             val build = builder.build()
