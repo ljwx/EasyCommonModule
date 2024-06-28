@@ -19,10 +19,11 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/play_link"
+            android:id="@+id/device_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="播放链接"
+            android:hint="设备名"
+            android:text="micro:bit"
             android:maxHeight="300dp" />
 
         <LinearLayout

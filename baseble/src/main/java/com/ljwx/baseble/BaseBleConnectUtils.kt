@@ -175,6 +175,7 @@ object BaseBleConnectUtils {
                     "onServicesDiscovered"
                 )
                 notify?.apply {
+                    Log.d("蓝牙", "创建服务：" + second)
                     BaseBleCommunicationUtils.enableNotifications(gatt, first, second, third)
                 }
             } else {
@@ -209,7 +210,7 @@ object BaseBleConnectUtils {
             super.onCharacteristicWrite(gatt, characteristic, status)
             //写入Characteristic
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                listener?.stateChange(BaseBleConst.STATE_WRITE_SUCCESS, "写入命令成功")
+                listener?.stateChange(BaseBleConst.STATE_WRITE_SUCCESS, "写入命令成功:" + characteristic?.uuid)
             }
         }
 
@@ -224,7 +225,7 @@ object BaseBleConnectUtils {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 listener?.stateChange(
                     BaseBleConst.STATE_READ_SUCCESS,
-                    "读取成功:" + HexString.bytesToHex(characteristic.value)
+                    "读取成功:" + HexString.bytesToHex(characteristic.value) + "," + characteristic.uuid
                 )
             }
         }
@@ -239,7 +240,7 @@ object BaseBleConnectUtils {
             val value = characteristic.value
             listener?.stateChange(
                 BaseBleConst.STATE_CHARACTERISTIC_CHANGED,
-                "回复的内容：" + HexString.bytesToHex(value)
+                "回复的内容：" + HexString.bytesToHex(value) + "," + characteristic.uuid
             )
         }
 
@@ -252,7 +253,7 @@ object BaseBleConnectUtils {
             //写入Descriptor
             listener?.stateChange(
                 BaseBleConst.STATE_DESCRIPTOR_WRITE_SUCCESS,
-                "写入监听成功，可以写入命令"
+                "写入监听成功，可以写入命令：" + descriptor?.uuid
             )
         }
 
@@ -266,7 +267,7 @@ object BaseBleConnectUtils {
             //读取Descriptor
             listener?.stateChange(
                 BaseBleConst.STATE_DESCRIPTOR_READ_SUCCESS,
-                "接收监听成功，可以接收数据"
+                "接收监听成功，可以接收数据:" + descriptor.uuid
             )
         }
 

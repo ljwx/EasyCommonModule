@@ -30,7 +30,6 @@ class BleTestFragment :
         super.onViewCreated(view, savedInstanceState)
 
         BaseBleManager.getInstance().init(requireContext())
-        mBinding.playLink
 
         mBinding.check.singleClick {
             val state = BaseBleManager.getInstance().conditionCheck(requireContext())
@@ -71,9 +70,10 @@ class BleTestFragment :
         }
 
         mBinding.connect.singleClick {
+            val filterName = mBinding.deviceName.text.toString()
             BaseBleManager.getInstance().stopScan()
             devices.forEach {
-                if (it.value.name.contains("tudao", true)) {
+                if (it.value.name.contains(filterName, true)) {
                     bleDevice = it.value
                 }
             }
@@ -106,10 +106,6 @@ class BleTestFragment :
                         BaseBleManager.getInstance().disConnect()
                     }
                     BaseBleConst.STATE_SCAN_SUCCESS_RESULT -> {
-                        if (message.contains("catbit")) {
-                            BaseBleManager.getInstance().stopScan()
-                            bleDevice = device
-                        }
                     }
                     BaseBleConst.STATE_CONNECT_SUCCESS -> {
                         devices.clear()
