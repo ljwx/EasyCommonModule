@@ -10,9 +10,9 @@ import android.bluetooth.BluetoothGattService
 import android.content.Context
 import android.os.Build
 import android.util.Log
-import java.util.ArrayList
 import java.util.HashMap
 import java.util.UUID
+import kotlin.collections.ArrayList
 
 
 object BaseBleConnectUtils {
@@ -23,7 +23,11 @@ object BaseBleConnectUtils {
 
     private var listener: BaseBleManager.BleStateListener? = null
 
-    var serverList = ArrayList<UUIDInfo>()
+    private val uuidListServer = ArrayList<String>()
+    private val uuidListCharacteristic = ArrayList<String>()
+
+    var serverUuidList = ArrayList<UUIDInfo>()
+    val characteristicUuidList = ArrayList<UUID>()
     var readCharaMap = HashMap<String, ArrayList<UUIDInfo>>()
     var writeCharaMap = HashMap<String, ArrayList<UUIDInfo>>()
     private var selectServer: UUIDInfo? = null
@@ -72,7 +76,7 @@ object BaseBleConnectUtils {
 //                bleGattDescriptor?.value = BluetoothGattDescriptor.ENABLE_INDICATION_VALUE
 //                gatt?.writeDescriptor(bleGattDescriptor)
 
-                serverList.clear()
+                serverUuidList.clear()
                 readCharaMap.clear()
                 writeCharaMap.clear()
                 var notify: Triple<UUID, UUID, UUID>? = null
@@ -80,10 +84,11 @@ object BaseBleConnectUtils {
                 gatt.services.forEach { server ->
                     val serverInfo = UUIDInfo(server.uuid)
                     serverInfo.strCharactInfo = "[Server]"
-                    serverList.add(serverInfo)
+                    serverUuidList.add(serverInfo)
                     val readArray = ArrayList<UUIDInfo>()
                     val writeArray = ArrayList<UUIDInfo>()
                     server.characteristics.forEach { character ->
+                        characteristicUuidList.add(character.uuid)
                         val charaProp = character.properties
                         var isRead = false
                         var isWrite = false
@@ -210,7 +215,10 @@ object BaseBleConnectUtils {
             super.onCharacteristicWrite(gatt, characteristic, status)
             //写入Characteristic
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                listener?.stateChange(BaseBleConst.STATE_WRITE_SUCCESS, "写入命令成功:" + characteristic?.uuid)
+                listener?.stateChange(
+                    BaseBleConst.STATE_WRITE_SUCCESS,
+                    "写入命令成功:" + characteristic?.uuid
+                )
             }
         }
 

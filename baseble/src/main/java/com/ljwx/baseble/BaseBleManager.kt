@@ -56,28 +56,7 @@ class BaseBleManager private constructor() {
     }
 
     fun startScan() {
-        BaseBleScanUtils.startScan(object : ScanCallback() {
-            override fun onScanResult(callbackType: Int, result: ScanResult) {
-                super.onScanResult(callbackType, result)
-                // result.getScanRecord() 获取BLE广播数据
-                val device = result.device//获取BLE设备信息
-                val deviceName = device.name ?: "空的"
-                stateListener?.stateChange(
-                    BaseBleConst.STATE_SCAN_SUCCESS_RESULT,
-                    "设备名：$deviceName", device
-                )
-            }
-
-            override fun onScanFailed(errorCode: Int) {
-                super.onScanFailed(errorCode)
-                Log.d("蓝牙扫描结果失败", "失败码：$errorCode")
-                stateListener?.stateChange(BaseBleConst.STATE_SCAN_FAIL, "错误码：$errorCode")
-            }
-
-            override fun onBatchScanResults(results: MutableList<ScanResult>?) {
-                super.onBatchScanResults(results)
-            }
-        })
+        BaseBleScanUtils.startScan(stateListener)
     }
 
     fun stopScan() {
@@ -104,14 +83,6 @@ class BaseBleManager private constructor() {
 
     fun disConnect() {
         BaseBleConnectUtils.disconnect()
-    }
-
-    fun addStateListener2(listener: BleStateListener) {
-        stateListener2 = listener
-    }
-
-    fun addStateListener3(listener: BleStateListener) {
-        stateListener3 = listener
     }
 
     interface BleStateListener {
