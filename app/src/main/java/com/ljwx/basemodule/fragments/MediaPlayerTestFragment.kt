@@ -69,11 +69,11 @@ class MediaPlayerTestFragment :
 
         mBinding.play.singleClick {
             val path = mBinding.playLink.text.toString()
-            player.startPlay(path)
+            player.start(path)
         }
 
         mBinding.pause.singleClick {
-            player.pausePlay()
+            player.pause()
         }
 
         mBinding.release.singleClick {

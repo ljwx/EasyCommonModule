@@ -6,13 +6,52 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.Executors
+
 
 class LjwxMediaPlayer(
     private val context: Context,
     private val fileName: String? = null,
     private val cachePath: String = context.cacheDir.path + "/media_cache/" + fileName,
     private val cacheSize: Long = 1024 * 1024 * 40L
-) {
+) : IMediaPlayer {
+
+    companion object {
+        private val audioPool by lazy { CopyOnWriteArrayList<IMediaPlayer>() }
+        private val audioThread by lazy { Executors.newSingleThreadExecutor() }
+
+        fun execute(runnable: Runnable) {
+            audioThread.execute(runnable)
+        }
+
+        fun addAndStartPlay(player: IMediaPlayer, data: IMediaData) {
+            audioThread.execute {
+                audioPool.add(player)
+                player.setMediaItem(data.getMediaUri(), data.getMediaId())
+                player.prepare()
+                player.start()
+            }
+        }
+
+        fun getProgress() {
+            audioThread.execute {
+
+            }
+        }
+
+        fun stop(id: String) {
+            audioThread.execute {
+                audioPool.forEach {
+                    if (it.getMediaId() == id) {
+                        it.stop()
+                        it.release()
+                    }
+                }
+            }
+        }
+
+    }
 
 //    companion object {
 //
@@ -159,7 +198,7 @@ class LjwxMediaPlayer(
         player?.addListener(exoListener!!)
     }
 
-    fun prepare() {
+    override fun prepare() {
         player?.prepare()
     }
 
@@ -167,25 +206,19 @@ class LjwxMediaPlayer(
         return player?.isPlaying == true
     }
 
-    fun startPlay(path: String? = null, prepare: Boolean = true) {
-        path?.let {
-            resetMediaItem(path)
-        }
-        if (prepare) {
-            player?.prepare()
-        }
+    override fun start() {
+        start()
+    }
+
+    fun resume() {
         player?.play()
     }
 
-    fun resumePlay() {
-        player?.play()
-    }
-
-    fun pausePlay() {
+    fun pause() {
         player?.pause()
     }
 
-    fun stopPlay() {
+    override fun stop() {
         player?.stop()
     }
 
@@ -201,11 +234,18 @@ class LjwxMediaPlayer(
         player?.seekToNext()
     }
 
-    fun resetMediaItem(uri: String) {
-        player?.setMediaItem(MediaItem.fromUri(uri))
+    override fun setMediaItem(uri: String, id: String?) {
+        val mediaItem = MediaItem.Builder().setUri(uri).apply {
+            id?.apply { setMediaId(id) }
+        }.build()
+        player?.setMediaItem(mediaItem)
     }
 
-    fun resetMediaItem(list: List<String>) {
+    override fun getMediaId(): String {
+        return player?.currentMediaItem?.mediaId ?: ""
+    }
+
+    fun setMediaItem(list: List<String>) {
         player?.setMediaItems(list.map { MediaItem.fromUri(it) })
     }
 
@@ -225,7 +265,22 @@ class LjwxMediaPlayer(
         }
     }
 
-    fun release() {
+    fun getDuration(): Long {
+        return player?.duration ?: 0L
+    }
+
+    fun getCurrentPosition(): Long {
+        return player?.currentPosition ?: 0L
+    }
+
+    fun getProgress(): Float {
+        if (getDuration() < 1) {
+            return 0F
+        }
+        return getCurrentPosition() * 100.0F / getDuration()
+    }
+
+    override fun release() {
         player?.release()
     }
 
