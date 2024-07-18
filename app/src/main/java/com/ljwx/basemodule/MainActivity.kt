@@ -5,16 +5,20 @@ import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.result.ActivityResultCallback
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.ljwx.baseactivity.fast.QuickMainActivity
 import com.ljwx.baseapp.extensions.singleClick
 import com.ljwx.baseapp.infochange.IBaseUserInfo
+import com.ljwx.basemediaplayer.LjwxMediaPlayer
 import com.ljwx.basemodule.config.ConfigLaunchFunctionFragment
 import com.ljwx.basemodule.constance.ConstRouter
 import com.ljwx.basemodule.databinding.ActivityMainBinding
 import com.ljwx.basemodule.fragments.*
 import com.ljwx.basemodule.service.TestForegroundService
 import com.ljwx.basemodule.vm.TestViewModel
+import com.ljwx.baserecordaudio.RecordAudioManager
+import com.ljwx.baserecordaudio.RecordAudioUtils
 import com.ljwx.provideclipboardauto.ClipboardFragment
 
 @Route(path = ConstRouter.FUNCTION_DEBUG_MAIN)
@@ -25,6 +29,8 @@ class MainActivity :
     private val dialog by lazy {
         TestDialog()
     }
+
+    private val player by lazy { LjwxMediaPlayer(this) }
 
     override fun getTabLayout() = mBinding.tabLayout
 
@@ -45,8 +51,27 @@ class MainActivity :
         addTabFragment("config", ConfigLaunchFunctionFragment())
 
         unregisterLocalEvent("test4")
+        var test = false
+        RecordAudioUtils.registerPermission(this, object :ActivityResultCallback<Boolean> {
+            override fun onActivityResult(result: Boolean?) {
+                RecordAudioUtils.startTest(this@MainActivity)
+                test = true
+            }
+        })
         mBinding.button.singleClick {
-            routerTo(ConstRouter.SECOND_ACTIVITY).start()
+//            routerTo(ConstRouter.SECOND_ACTIVITY).start()
+            if (!test) {
+                RecordAudioUtils.startTest(this@MainActivity)
+                test = true
+            } else {
+                RecordAudioUtils.stopTest()
+                test = false
+                RecordAudioManager.getInstance().getPathName()?.let {
+                    player.setMediaItem(it)
+                    player.prepare()
+                    player.start()
+                }
+            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

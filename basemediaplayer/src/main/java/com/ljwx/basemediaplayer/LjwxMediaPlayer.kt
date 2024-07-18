@@ -12,8 +12,8 @@ import java.util.concurrent.Executors
 
 class LjwxMediaPlayer(
     private val context: Context,
-    private val fileName: String? = null,
-    private val cachePath: String = context.cacheDir.path + "/media_cache/" + fileName,
+    private val cacheFileName: String? = null,
+    private val cachePath: String = context.cacheDir.path + "/media_cache/" + cacheFileName,
     private val cacheSize: Long = 1024 * 1024 * 40L
 ) : IMediaPlayer {
 
@@ -88,7 +88,7 @@ class LjwxMediaPlayer(
     }
 
     private fun enableCache(): Boolean {
-        return !fileName.isNullOrEmpty()
+        return !cacheFileName.isNullOrEmpty()
     }
 
     private fun initPlayer(): Player {
@@ -207,7 +207,7 @@ class LjwxMediaPlayer(
     }
 
     override fun start() {
-        start()
+        player?.play()
     }
 
     fun resume() {
@@ -238,6 +238,7 @@ class LjwxMediaPlayer(
         val mediaItem = MediaItem.Builder().setUri(uri).apply {
             id?.apply { setMediaId(id) }
         }.build()
+        Log.d("音频", "添加的音频uri:$uri")
         player?.setMediaItem(mediaItem)
     }
 
