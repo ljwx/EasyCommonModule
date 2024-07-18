@@ -59,7 +59,7 @@ object RecordAudioUtils {
                 return "amr"
             }
         }
-        return "3gp"
+        return "pcm"
     }
 
     fun getFileName(suffix: String, fileName: String? = null): String {

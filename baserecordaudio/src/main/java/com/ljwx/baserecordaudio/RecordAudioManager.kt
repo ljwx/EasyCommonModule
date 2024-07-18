@@ -10,10 +10,10 @@ class RecordAudioManager {
         }
     }
 
-    private var mediaRecorder: RecordAudio? = null
+    private var mediaRecorder: IRecordAudio? = null
 
     fun start(pathName: String, encoderType: Int) {
-        mediaRecorder = mediaRecorder ?: RecordAudio()
+        mediaRecorder = mediaRecorder ?: RecordAudioPCM()
         mediaRecorder?.start(pathName, encoderType)
     }
 
