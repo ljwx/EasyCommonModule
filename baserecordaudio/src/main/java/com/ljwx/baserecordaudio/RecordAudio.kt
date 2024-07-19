@@ -12,6 +12,8 @@ class RecordAudio : IRecordAudio {
     private var volumeDetectionListener: RecordAudioVolumeDetectionListener? = null
     private var volumeDetectionHandler: Handler? = null
     private var volumeDetectionRunnable: Runnable? = null
+    private var isRecording = false
+
     override fun start(pathName: String, audioType: Int) {
         this.pathName = pathName
         mediaRecorder = mediaRecorder ?: MediaRecorder()
@@ -23,6 +25,7 @@ class RecordAudio : IRecordAudio {
         try {
             mediaRecorder?.prepare()
             mediaRecorder?.start()
+            isRecording = true
         } catch (e: IOException) {
             e.printStackTrace()
             Log.d("录音", "录音异常:$e")
@@ -30,17 +33,22 @@ class RecordAudio : IRecordAudio {
     }
 
     override fun stop() {
+        isRecording = false
         mediaRecorder?.stop()
     }
 
     override fun release() {
-        mediaRecorder?.stop()
+        stop()
         mediaRecorder?.release()
+        Log.d("录音", "释放录音")
+    }
+
+    override fun destroy() {
+        release()
         mediaRecorder = null
         volumeDetectionHandler = null
         volumeDetectionRunnable = null
         volumeDetectionListener = null
-        Log.d("录音", "释放录音")
     }
 
     override fun setVolumeDetection(listener: RecordAudioVolumeDetectionListener) {
@@ -48,7 +56,9 @@ class RecordAudio : IRecordAudio {
         volumeDetectionHandler = volumeDetectionHandler ?: Handler()
         volumeDetectionRunnable = volumeDetectionRunnable ?: object : Runnable {
             override fun run() {
-                volumeDetectionListener?.volumeValue((mediaRecorder?.maxAmplitude ?: 0).toFloat())
+                if (isRecording) {
+                    volumeDetectionListener?.maxAmplitude(mediaRecorder?.maxAmplitude ?: 0)
+                }
                 volumeDetectionHandler?.postDelayed(this, 100)
             }
         }

@@ -12,8 +12,21 @@ class RecordAudioManager {
 
     private var mediaRecorder: IRecordAudio? = null
 
+    private fun getRecorder(encoderType: Int): IRecordAudio? {
+        when (encoderType) {
+            ConstAudioType.FILE_TYPE_AAC -> {
+                mediaRecorder = RecordAudio()
+            }
+
+            ConstAudioType.FILE_TYPE_PCM -> {
+                mediaRecorder = RecordAudioPCM()
+            }
+        }
+        return mediaRecorder
+    }
+
     fun start(pathName: String, encoderType: Int) {
-        mediaRecorder = mediaRecorder ?: RecordAudioPCM()
+        mediaRecorder = mediaRecorder ?: getRecorder(encoderType)
         mediaRecorder?.start(pathName, encoderType)
     }
 

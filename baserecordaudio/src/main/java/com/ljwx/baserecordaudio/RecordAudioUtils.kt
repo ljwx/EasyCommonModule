@@ -18,12 +18,12 @@ object RecordAudioUtils {
 
     fun startTest(activity: AppCompatActivity) {
         val pathName =
-            getCacheDir(activity, "record_audio") + "/" + getFileName(getFileSuffix(67))
+            getCacheDir(activity, "record_audio") + "/" + getFileName(getFileSuffix(ConstAudioType.FILE_TYPE_AAC))
         if (checkPermissions(activity)) {
-            RecordAudioManager.getInstance().start(pathName, 1)
+            RecordAudioManager.getInstance().start(pathName, ConstAudioType.FILE_TYPE_AAC)
             RecordAudioManager.getInstance()
                 .setVolumeDetection(object : RecordAudioVolumeDetectionListener {
-                    override fun volumeValue(value: Float) {
+                    override fun maxAmplitude(value: Int) {
                         Log.d("录音", "音量大小:$value")
                     }
 
@@ -39,6 +39,7 @@ object RecordAudioUtils {
 
     private var permissionLauncher: ActivityResultLauncher<String>? = null
     private var permissionCallback: ActivityResultCallback<Boolean>? = null
+    private val minAngle = Math.PI.toFloat() * 4 / 11
 
     fun getCacheDir(context: Context, targetDir: String): String {
         val dirPath = context.cacheDir.path + "/" + targetDir
@@ -57,6 +58,10 @@ object RecordAudioUtils {
 
             ConstAudioType.FILE_TYPE_AMR -> {
                 return "amr"
+            }
+
+            ConstAudioType.FILE_TYPE_PCM -> {
+                return "pcm"
             }
         }
         return "pcm"
@@ -99,6 +104,15 @@ object RecordAudioUtils {
 
     fun requestPermission() {
         permissionLauncher?.launch(Manifest.permission.RECORD_AUDIO)
+    }
+
+    fun countVolume(maxAmplitude: Int): Float {
+        var angle = 0f
+        angle = 100 * minAngle * (maxAmplitude) / 32768
+        if (angle > 100) {
+            angle = 100F
+        }
+        return angle
     }
 
 }

@@ -67,7 +67,7 @@ class RecordAudioPCM : IRecordAudio {
                             maxAmplitude = Math.abs(s.toInt())
                         }
                     }
-                    volumeDetectionListener?.volumeValue((maxAmplitude).toFloat())
+                    volumeDetectionListener?.maxAmplitude(maxAmplitude)
                     os.write(buffer, 0, read)
                 }
             }
@@ -96,14 +96,18 @@ class RecordAudioPCM : IRecordAudio {
     override fun release() {
         stop()
         audioRecord?.release()
-        audioRecord = null
-        audioHandler = null
-        volumeDetectionRunnable = null
-        volumeDetectionListener = null
         Log.d("录音", "释放录音")
         PcmToWavUtils.pcmToWav(
             pathName, File(pathName).parent + "/" + System.currentTimeMillis() + ".wav"
         )
+    }
+
+    override fun destroy() {
+        release()
+        audioRecord = null
+        audioHandler = null
+        volumeDetectionRunnable = null
+        volumeDetectionListener = null
     }
 
     override fun setVolumeDetection(listener: RecordAudioVolumeDetectionListener) {

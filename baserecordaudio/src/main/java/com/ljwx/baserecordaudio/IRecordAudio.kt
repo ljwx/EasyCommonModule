@@ -8,6 +8,8 @@ interface IRecordAudio {
 
     fun release()
 
+    fun destroy()
+
     fun setVolumeDetection(listener: RecordAudioVolumeDetectionListener)
 
     fun getPathName(): String?
