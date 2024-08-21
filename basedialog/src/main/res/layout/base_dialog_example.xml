@@ -8,14 +8,16 @@
         android:id="@+id/base_dialog_parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/dp16"
-        android:background="@android:color/white">
+        android:layout_marginHorizontal="@dimen/dp30"
+        android:background="@drawable/baseapp_shape_white_r12"
+        android:paddingBottom="@dimen/dp24">
 
         <ImageView
             android:id="@+id/base_dialog_close"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@android:drawable/ic_notification_clear_all"
+            android:padding="13dp"
+            android:src="@drawable/baseapp_close_black"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,7 +27,8 @@
             android:layout_height="wrap_content"
             android:text="标题"
             android:textColor="@color/base_app_textColorPrimary"
-            android:textSize="@dimen/sp14"
+            android:textSize="@dimen/sp16"
+            android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/base_dialog_close" />
@@ -34,16 +37,17 @@
             android:id="@+id/base_dialog_content_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/base_dialog_title">
 
             <TextView
                 android:id="@+id/base_dialog_content_string"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginHorizontal="@dimen/dp20"
-                android:layout_marginTop="@dimen/dp20"
                 android:text="标题asdfadsf发送大附件哦偶尔金佛啊撒旦解放哦啊手动阀骄傲上的飞机"
                 android:textColor="@color/base_app_textColorPrimary"
                 android:textSize="@dimen/sp14" />
@@ -54,9 +58,10 @@
             android:id="@+id/base_dialog_negative"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp20"
+            android:layout_marginTop="@dimen/dp30"
+            android:background="@drawable/baseapp_selector_button_grey_r8"
             android:text="取消"
-            android:textColor="@color/base_app_textColorPrimary"
+            android:textColor="@color/white"
             android:textSize="@dimen/sp14"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -68,9 +73,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/dp20"
-            android:layout_marginTop="@dimen/dp20"
+            android:layout_marginTop="@dimen/dp30"
+            android:background="@drawable/baseapp_selector_button_theme_r8"
             android:text="确定"
-            android:textColor="@color/base_app_textColorPrimary"
+            android:textColor="@color/white"
             android:textSize="@dimen/sp14"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintLeft_toRightOf="@id/base_dialog_negative"
