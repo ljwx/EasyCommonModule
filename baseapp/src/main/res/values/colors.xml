@@ -1,12 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="baseapp_theme_color">@color/green_00ca83</color>
+    <color name="baseapp_theme_color_variant">#6600CA83</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00000000</color>
 
     <color name="green_1abb92">#1ABB92</color>
-    <color name="grey_f6f8fa">#F6F8FA</color>
+    <color name="green_00ca83">#00CA83</color>
 
-    <color name="base_divider_dcdcdc">#dcdcdc</color>
+    <color name="grey_f6f8fa">#F6F8FA</color>
+    <color name="grey_f4f5f7">#F4F5F7</color>
+
+    <color name="purple_7f77ff">#7F77FF</color>
+
+    <color name="yellow_ffe200">#FFE200</color>
+    <color name="yellow_ffb137">#FFB137</color>
+
+    <color name="blue_52d3ff">#52D3FF</color>
+    <color name="blue_0092ff">#0092FF</color>
+
+    <color name="orange_ff9458">#FF9458</color>
+
+    <color name="red_fe6453">#FE6453</color>
+
+    <color name="baseapp_divider_dcdcdc">#dcdcdc</color>
+    <color name="base_divider_dcdcdc">@color/baseapp_divider_dcdcdc</color>
+
+    <color name="baseapp_page_background_grey">@color/grey_f4f5f7</color>
 </resources>

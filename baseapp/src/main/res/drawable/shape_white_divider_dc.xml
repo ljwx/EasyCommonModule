@@ -7,7 +7,7 @@
         android:height="0.8dp"
         android:gravity="bottom">
         <shape>
-            <solid android:color="@color/base_divider_dcdcdc" />
+            <solid android:color="@color/baseapp_divider_dcdcdc" />
         </shape>
     </item>
 </layer-list>
