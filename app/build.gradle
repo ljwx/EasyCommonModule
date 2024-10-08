@@ -105,6 +105,7 @@ dependencies {
     implementation project(path: ':basemediaplayer')
     implementation project(path: ':baseble')
     implementation project(path: ':baserecordaudio')
+    implementation project(path: ':basepermission')
 
     implementation 'io.github.ljwx:SplitTextView:0.3.8'
 
