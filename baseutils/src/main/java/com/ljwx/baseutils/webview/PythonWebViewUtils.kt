@@ -2,6 +2,7 @@ package com.ljwx.baseutils.webview
 
 import android.os.Build
 import android.text.TextUtils
+import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
@@ -13,8 +14,14 @@ import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLConnection
+import java.security.SecureRandom
+import java.security.cert.CertificateException
+import java.security.cert.X509Certificate
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 object PythonWebViewUtils {
 
@@ -225,6 +232,42 @@ object PythonWebViewUtils {
         }
         charset = charset.substring(charset.indexOf("=") + 1)
         return charset
+    }
+
+    private fun trustAllCertificates() {
+        try {
+            val trustAllCerts = arrayOf<TrustManager>(
+                object : X509TrustManager {
+
+                    @Throws(CertificateException::class)
+                    override fun checkClientTrusted(
+                        chain: Array<X509Certificate?>?,
+                        authType: String?
+                    ) {
+                    }
+
+                    @Throws(CertificateException::class)
+                    override fun checkServerTrusted(
+                        chain: Array<X509Certificate?>?,
+                        authType: String?
+                    ) {
+                    }
+
+                    override fun getAcceptedIssuers(): Array<X509Certificate> {
+                        return arrayOf()
+                    }
+
+                }
+            )
+            val sslContext = SSLContext.getInstance("TLS")
+            sslContext.init(null, trustAllCerts, SecureRandom())
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
+            val allHostsValid =
+                HostnameVerifier { hostname, session -> true }
+            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid)
+        } catch (e: Exception) {
+            Log.d("dns", "信任所有证书,异常:$e")
+        }
     }
 
 }
