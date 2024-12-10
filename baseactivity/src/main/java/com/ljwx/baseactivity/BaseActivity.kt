@@ -65,7 +65,9 @@ open class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.basea
         super.onCreate(savedInstanceState)
         BaseModuleLog.d(TAG, "生命周期onCreate")
         setStatusBarLight(true)
-        requestedOrientation = getScreenOrientation()
+        getScreenOrientation()?.let {
+            requestedOrientation = it
+        }
         if (enableKeyboardHeightListener()) {
             createKeyboardHeightProvider()
             keyboardHeightRootView()?.post { keyboardHighProvider?.start() }
@@ -96,7 +98,7 @@ open class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.basea
         return RouterPostcard(path)
     }
 
-    override fun getScreenOrientation(): Int {
+    override fun getScreenOrientation(): Int? {
         return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
