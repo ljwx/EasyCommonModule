@@ -8,8 +8,8 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ljwx.baseapp.debug.ILogCheckRecyclerView
-import com.ljwx.baselogcheck.display.FixSizeVector
-import com.ljwx.baselogcheck.display.LogCheckPool
+import com.ljwx.baselogcheck.data.FixSizeVector
+import com.ljwx.baselogcheck.data.LogCheckPool
 import com.ljwx.baselogcheck.recycler.BaseLogAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -1,4 +1,4 @@
-package com.ljwx.baselogcheck.display
+package com.ljwx.baselogcheck.data
 
 import kotlin.collections.ArrayList
 

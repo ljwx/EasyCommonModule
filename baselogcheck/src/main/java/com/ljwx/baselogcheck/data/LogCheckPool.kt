@@ -1,6 +1,4 @@
-package com.ljwx.baselogcheck.display
-
-import android.util.Log
+package com.ljwx.baselogcheck.data
 
 object LogCheckPool {
 

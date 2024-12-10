@@ -5,16 +5,46 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
-import com.ljwx.baselogcheck.display.LogCheckPool
+import com.ljwx.baselogcheck.data.LogCheckPool
 import java.text.SimpleDateFormat
 import java.util.Date
 
-object LogCheck {
+object LogExtCheck {
 
-    private val dataformat = SimpleDateFormat("HH:mm:ss")
+    private val dataformat by lazy { SimpleDateFormat("HH:mm:ss") }
     private val leveD = 1
     private val leveW = 2
     private val leveE = 3
+
+    @JvmStatic
+    fun d(category: String?, tag: String?, content: String?) {
+        addLog(category, tag, content, leveD)
+    }
+
+    @JvmStatic
+    fun w(category: String?, tag: String?, content: String?) {
+        addLog(category, tag, content, leveW)
+    }
+
+    @JvmStatic
+    fun e(category: String?, tag: String?, content: String?) {
+        addLog(category, tag, content, leveE)
+    }
+
+    private fun addLog(category: String?, tag: String?, content: String?, level: Int) {
+        if (tag != null && content != null) {
+            when (level) {
+                leveD -> Log.d(tag, content)
+                leveW -> Log.w(tag, content)
+                leveE -> Log.e(tag, content)
+            }
+
+            if (category != null) {
+                val spanStr = getSpanContent(level, "$tag:$content")
+                LogCheckPool.getLogPool(category).add(spanStr)
+            }
+        }
+    }
 
     private fun getSpanContent(level: Int, content: String): SpannableString {
         val time = dataformat.format(Date(System.currentTimeMillis()))
@@ -32,36 +62,6 @@ object LogCheck {
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         return spanStr
-    }
-
-    @JvmStatic
-    fun d(category: String?, tag: String?, content: String?) {
-        runLog(category, tag, content, leveD)
-    }
-
-    @JvmStatic
-    fun w(category: String?, tag: String?, content: String?) {
-        runLog(category, tag, content, leveW)
-    }
-
-    @JvmStatic
-    fun e(category: String?, tag: String?, content: String?) {
-        runLog(category, tag, content, leveE)
-    }
-
-    private fun runLog(category: String?, tag: String?, content: String?, level: Int) {
-        if (tag != null && content != null) {
-            when(level) {
-                leveD -> Log.d(tag, content)
-                leveW -> Log.w(tag, content)
-                leveE -> Log.e(tag, content)
-            }
-
-            if (category != null) {
-                val spanStr = getSpanContent(level, "$tag:$content")
-                LogCheckPool.getLogPool(category).add(spanStr)
-            }
-        }
     }
 
 }
