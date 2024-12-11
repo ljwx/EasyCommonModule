@@ -17,10 +17,12 @@ interface IPageRefreshLayout {
     /**
      * 触发刷新
      */
-    @Deprecated(message = "deprecated")
-    fun onRefreshData(type: Long = 0)
+//    @Deprecated(message = "deprecated")
+//    fun onRefreshData(type: Long = 0)
 
-    fun onLoadData(type: Long = 0)
+    fun onLoadData(refresh: Boolean, type: String? = null)
+
+//    fun onLoadData(refresh: Boolean, type: Long?)
 
     /**
      * 刷新结束

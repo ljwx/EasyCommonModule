@@ -37,8 +37,8 @@ class LoadMoreFragment :
         mLoadMoreAdapter.setLoadMoreCompleteView(R.layout.loadmore_custom_footer_complete)
     }
 
-    override fun onLoadData(isRefresh: Boolean) {
-        changePageNum(isRefresh)
+    override fun onLoadData(refresh: Boolean, type: String?) {
+        changePageNum(refresh)
         lifecycleScope.launch(Dispatchers.IO) {
             delay(Random.nextLong(1000, 3500))
             mTimes += 1
@@ -56,7 +56,7 @@ class LoadMoreFragment :
                     for (i in 0 until end) {
                         list.add((mLoadMoreAdapter.itemCount + i).toString())
                     }
-                    addLoadMoreData(list, isRefresh)
+                    addLoadMoreData(list, refresh)
                 }
             }
         }

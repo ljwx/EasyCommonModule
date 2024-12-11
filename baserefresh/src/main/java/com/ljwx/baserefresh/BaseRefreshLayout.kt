@@ -47,7 +47,7 @@ open class BaseRefreshLayout @JvmOverloads constructor(
 
         init {
             super.setOnRefreshListener {
-                refreshPage?.onRefreshData()
+                refreshPage?.onLoadData(true)
             }
         }
 

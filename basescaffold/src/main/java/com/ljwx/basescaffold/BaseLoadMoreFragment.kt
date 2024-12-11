@@ -35,12 +35,16 @@ abstract class BaseLoadMoreFragment<Binding : ViewDataBinding, ViewModel : BaseV
 
     abstract fun initRecyclerView()
 
-    abstract fun onLoadData(isRefresh: Boolean)
+//    abstract fun onLoadData(isRefresh: Boolean)
 
-    override fun onRefreshData(type: Long) {
-        super.onRefreshData(type)
-        onLoadData(true)
-    }
+//    override fun onLoadData(refresh: Boolean, type: String?) {
+//        super.onLoadData(refresh, type)
+//    }
+
+//    override fun onRefreshData(type: Long) {
+//        super.onRefreshData(type)
+//        onLoadData(true)
+//    }
 
     open fun changePageNum(isRefresh: Boolean) {
         mPage = if (isRefresh) 0 else mPage + 1

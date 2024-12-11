@@ -200,15 +200,19 @@ abstract class BaseStateRefreshFragment(@LayoutRes layoutResID: Int = R.layout.b
     /**
      * 下拉刷新
      */
-    override fun onRefreshData(type: Long) {
-        onLoadData(type)
+//    override fun onRefreshData(type: Long) {
+//        onLoadData(type)
+//    }
+
+    override fun onLoadData(refresh: Boolean, type: String?) {
+//        fun isRefresh() {
+//
+//        }
     }
 
-    override fun onLoadData(type: Long) {
-        fun isRefresh() {
-
-        }
-    }
+//    override fun onLoadData(refresh: Boolean, type: Long?) {
+//
+//    }
 
     /**
      * 刷新结束

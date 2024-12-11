@@ -51,8 +51,8 @@ class BaseFragmentTest :
         }
     }
 
-    override fun onLoadData(type: Long) {
-        super.onLoadData(type)
+    override fun onLoadData(refresh: Boolean, type: String?) {
+        super.onLoadData(refresh, type)
     }
 
 }
