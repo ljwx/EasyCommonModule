@@ -38,25 +38,25 @@ class SecondActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        commonProcessSteps()
+        enableCommonSteps()
         addShow()
 
     }
 
-    override fun getFirstInitData() {
-        super.getFirstInitData()
+    override fun commonStep1InitData() {
+        super.commonStep1InitData()
 //        intent.getParcelableExtra<TestData>("test")?.let {
 ////            showToast(it.code.toString())
 //        }
     }
 
-    override fun observeData() {
-        super.observeData()
+    override fun commonStep3ObserveData() {
+        super.commonStep3ObserveData()
 
     }
 
-    override fun setClickListener() {
-        super.setClickListener()
+    override fun commonStep4SetViewListener() {
+        super.commonStep4SetViewListener()
         mBinding.memory.singleClick {
             FlowEventBus.get<String>("flow").post(this@SecondActivity, "flowevent")
             LiveEventBus.get<String>("liveeventbus").post("liveEvent")
@@ -77,8 +77,8 @@ class SecondActivity :
 //        }
     }
 
-    override fun getAsyncData(refresh: Boolean) {
-        super.getAsyncData(refresh)
+    override fun commonStep5RequestData(refresh: Boolean) {
+        super.commonStep5RequestData(refresh)
 //        mViewModel.requestTest()
     }
 

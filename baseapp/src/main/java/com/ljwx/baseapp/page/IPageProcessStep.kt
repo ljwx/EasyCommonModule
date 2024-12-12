@@ -2,16 +2,16 @@ package com.ljwx.baseapp.page
 
 interface IPageProcessStep {
 
-    fun commonProcessSteps()
+    fun enableCommonSteps()
 
-    fun getFirstInitData()
+    fun commonStep1InitData()
 
-    fun initUIView()
+    fun commonStep2InitView()
 
-    fun observeData()
+    fun commonStep3ObserveData()
 
-    fun setClickListener()
+    fun commonStep4SetViewListener()
 
-    fun getAsyncData(refresh: Boolean = true)
+    fun commonStep5RequestData(refresh: Boolean = true)
 
 }

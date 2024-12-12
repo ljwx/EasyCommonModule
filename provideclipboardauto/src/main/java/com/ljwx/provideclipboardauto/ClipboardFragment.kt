@@ -39,13 +39,13 @@ class ClipboardFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        commonProcessSteps()
+        enableCommonSteps()
         updateList()
 
     }
 
-    override fun initUIView() {
-        super.initUIView()
+    override fun commonStep2InitView() {
+        super.commonStep2InitView()
         mBinding.edit.setOnFocusChangeListener { view, b ->
             if (b) {
                 delayRun(300) {
@@ -71,8 +71,8 @@ class ClipboardFragment :
         }
     }
 
-    override fun setClickListener() {
-        super.setClickListener()
+    override fun commonStep4SetViewListener() {
+        super.commonStep4SetViewListener()
         mBinding.get.singleClick {
             lifecycleScope.launch(Dispatchers.IO) {
                 val item = DBManager.clipboardDao().getLast()

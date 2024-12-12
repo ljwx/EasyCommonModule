@@ -22,13 +22,13 @@ class ThirdActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        commonProcessSteps()
+        enableCommonSteps()
 
     }
 
 
-    override fun setClickListener() {
-        super.setClickListener()
+    override fun commonStep4SetViewListener() {
+        super.commonStep4SetViewListener()
         mBinding.button.singleClick {
             val info = object : BaseUserInfo() {
 

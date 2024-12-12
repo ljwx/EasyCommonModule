@@ -195,12 +195,12 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
     /**
      * 下拉刷新逻辑
      */
-//    override fun onRefreshData(type: Long) {
-//        BaseModuleLog.d(TAG, "出发刷新数据")
-//        onLoadData(type)
-//    }
+    override fun refreshViewOnRefresh() {
+        BaseModuleLog.d(TAG, "下拉刷新控件,触发刷新")
 
-    override fun onLoadData(refresh: Boolean, type: String?) {
+    }
+
+    override fun onLoadData(refresh: Boolean, params: String?) {
 
     }
 

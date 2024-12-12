@@ -42,7 +42,7 @@ abstract class BaseMVVMActivity<Binding : ViewDataBinding, ViewModel : BaseViewM
         observe(this@BaseMVVMActivity, observer)
     }
 
-    override fun observeData() {
+    override fun commonStep3ObserveData() {
         mViewModel.finishActivity.observe(this) {
             if (it && !isFinishing) {
                 finish()

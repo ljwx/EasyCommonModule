@@ -244,31 +244,31 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
     }
 
 
-    override fun commonProcessSteps() {
-        getFirstInitData()
-        initUIView()
-        observeData()
-        setClickListener()
-        getAsyncData()
+    override fun enableCommonSteps() {
+        commonStep1InitData()
+        commonStep2InitView()
+        commonStep3ObserveData()
+        commonStep4SetViewListener()
+        commonStep5RequestData()
     }
 
-    override fun getFirstInitData() {
-
-    }
-
-    override fun initUIView() {
+    override fun commonStep1InitData() {
 
     }
 
-    override fun observeData() {
+    override fun commonStep2InitView() {
 
     }
 
-    override fun setClickListener() {
+    override fun commonStep3ObserveData() {
 
     }
 
-    override fun getAsyncData(refresh: Boolean) {
+    override fun commonStep4SetViewListener() {
+
+    }
+
+    override fun commonStep5RequestData(refresh: Boolean) {
 
     }
 

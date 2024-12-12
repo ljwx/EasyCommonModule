@@ -51,7 +51,7 @@ abstract class BaseVMFragment<ViewModel : BaseViewModel<*>> :
         observe(viewLifecycleOwner, observer)
     }
 
-    override fun observeData() {
+    override fun commonStep3ObserveData() {
         mViewModel.finishActivity.observe(this) {
             if (it) {
                 activity?.finish()

@@ -16,15 +16,15 @@ class GeShuiSplashActivity : BaseBindingActivity<ActivityGeShuiBinding>(R.layout
 
         setStatusBarLight(false)
         mBinding.image.setImageResource(R.mipmap.splash)
-        commonProcessSteps()
+        enableCommonSteps()
         delayRun(1500){
             routerTo(ConstGeShui.ROUTER_HOME).withFromType(1).start()
             finish()
         }
     }
 
-    override fun setClickListener() {
-        super.setClickListener()
+    override fun commonStep4SetViewListener() {
+        super.commonStep4SetViewListener()
     }
 
 }

@@ -36,4 +36,6 @@ interface IPageStateLayout {
 
     fun showErrorStateInit():Boolean
 
+    fun onLoadData(refresh: Boolean, params: String? = null)
+
 }

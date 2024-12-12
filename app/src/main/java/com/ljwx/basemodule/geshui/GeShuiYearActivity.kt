@@ -13,14 +13,14 @@ class GeShuiYearActivity : BaseBindingActivity<GeshuiFragmentBinding>(R.layout.g
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        commonProcessSteps()
+        enableCommonSteps()
         setStatusBarLight(false)
         mBinding.image.setImageResource(R.mipmap.year)
 
     }
 
-    override fun setClickListener() {
-        super.setClickListener()
+    override fun commonStep4SetViewListener() {
+        super.commonStep4SetViewListener()
         mBinding.yearButton.singleClick {
             routerTo(ConstGeShui.ROUTER_LIST).start()
         }

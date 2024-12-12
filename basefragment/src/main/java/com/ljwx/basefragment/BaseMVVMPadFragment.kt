@@ -65,7 +65,7 @@ abstract class BaseMVVMPadFragment<Binding : ViewDataBinding, BindingPad : ViewD
         observe(viewLifecycleOwner, observer)
     }
 
-    override fun observeData() {
+    override fun commonStep3ObserveData() {
         mViewModel.finishActivity.observe(this) {
             if (it) {
                 activity?.finish()

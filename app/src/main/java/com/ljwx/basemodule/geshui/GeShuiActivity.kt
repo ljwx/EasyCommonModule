@@ -11,12 +11,12 @@ class GeShuiActivity : BaseBindingActivity<ActivityGeShuiBinding>(R.layout.activ
         super.onCreate(savedInstanceState)
 
         setStatusBarLight(false)
-        commonProcessSteps()
+        enableCommonSteps()
         replace(1)
     }
 
-    override fun setClickListener() {
-        super.setClickListener()
+    override fun commonStep4SetViewListener() {
+        super.commonStep4SetViewListener()
         var type = 1
         mBinding.right.singleClick {
             type += 1

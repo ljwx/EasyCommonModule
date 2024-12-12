@@ -14,13 +14,13 @@ class GeShuiHomeActivity : BaseBindingActivity<ActivityGeShuiBinding>(R.layout.a
         super.onCreate(savedInstanceState)
 
         setStatusBarLight(false)
-        commonProcessSteps()
+        enableCommonSteps()
         mBinding.image.setImageResource(R.mipmap.home)
 
     }
 
-    override fun setClickListener() {
-        super.setClickListener()
+    override fun commonStep4SetViewListener() {
+        super.commonStep4SetViewListener()
         mBinding.left.singleClick {
             mBinding.image.setImageResource(R.mipmap.home)
         }

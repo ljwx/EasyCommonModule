@@ -20,7 +20,9 @@ interface IPageRefreshLayout {
 //    @Deprecated(message = "deprecated")
 //    fun onRefreshData(type: Long = 0)
 
-    fun onLoadData(refresh: Boolean, type: String? = null)
+//    fun onLoadData(refresh: Boolean, type: String? = null)
+
+    fun refreshViewOnRefresh()
 
 //    fun onLoadData(refresh: Boolean, type: Long?)
 
