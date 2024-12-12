@@ -48,6 +48,13 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
 
     }
 
+    override fun onViewCreated() {
+        super.onViewCreated()
+        BaseModuleLog.d(TAG, "静默初始化多状态和刷新")
+        enableAutoInitStateLayout()
+        enableAutoInitRefreshLayout()
+    }
+
     override fun showPopLoading(
         show: Boolean,
         message: CharSequence?,
@@ -77,7 +84,7 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
     /**
      * 快速使用状态布局
      */
-    open fun useCommonStateLayout() {
+    override fun enableAutoInitStateLayout() {
         val stateLayout = findViewById<View>(R.id.base_app_quick_state_layout)
         if (stateLayout != null && stateLayout is IViewStateLayout) {
             initStateLayout(stateLayout)
@@ -87,7 +94,7 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
     /**
      * 快速使用刷新布局
      */
-    open fun useCommonRefreshLayout() {
+    override fun enableAutoInitRefreshLayout() {
         var refreshLayout = findViewById<View>(R.id.base_app_quick_refresh_layout)
         if (refreshLayout == null) {
             refreshLayout = findViewById(R.id.base_app_page_refresh_layout)

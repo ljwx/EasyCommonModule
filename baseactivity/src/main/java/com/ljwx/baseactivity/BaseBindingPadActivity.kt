@@ -30,18 +30,11 @@ abstract class BaseBindingPadActivity<Binding : ViewDataBinding, BindingPad : Vi
         } else {
             mBinding = DataBindingUtil.setContentView(this, getLayoutRes())
         }
-        //等待binding过后
-        initToolbar(com.ljwx.baseapp.R.id.base_app_toolbar)
-        quickLayout()
+        onViewCreated()
     }
 
     override fun getLayoutRes(): Int {
         return if (isPad) layoutResPad else layoutRes
-    }
-
-    private fun quickLayout() {
-        useCommonStateLayout()
-        useCommonRefreshLayout()
     }
 
     override fun onDestroy() {

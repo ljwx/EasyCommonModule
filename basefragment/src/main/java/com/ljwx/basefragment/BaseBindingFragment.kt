@@ -23,14 +23,7 @@ abstract class BaseBindingFragment<Binding : ViewDataBinding>(@LayoutRes private
         savedInstanceState: Bundle?,
     ): View? {
         mBinding = DataBindingUtil.inflate(inflater, layoutRes, container, false)
-        quickLayout()
         return mBinding.root
-    }
-
-    private fun quickLayout() {
-        BaseModuleLog.d(TAG, "静默初始化多状态和刷新")
-        useCommonStateLayout()
-        useCommonRefreshLayout()
     }
 
     override fun onDestroy() {

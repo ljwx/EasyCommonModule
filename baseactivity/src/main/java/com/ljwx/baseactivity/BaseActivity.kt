@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.ljwx.baseactivity.statusbar.BaseStatusBar
+import com.ljwx.baseapp.R
 import com.ljwx.baseapp.constant.BaseConstBundleKey
 import com.ljwx.baseapp.constant.BaseLogTag
 import com.ljwx.baseapp.keyboard.KeyboardHeightProvider
@@ -32,7 +33,7 @@ import com.ljwx.baseapp.view.IViewStatusBar
 import com.ljwx.basedialog.common.BaseDialogBuilder
 import com.ljwx.router.RouterPostcard
 
-open class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.baseapp.R.layout.baseapp_state_layout_empty) :
+abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.baseapp.R.layout.baseapp_state_layout_empty) :
     BaseToolsActivity(), IPageStatusBar, IPageToolbar, IPageLocalEvent,
     IPageDialogTips, IPageProcessStep, IPageActivity, IPageStartPage, IPageKeyboardHeight {
 
@@ -72,6 +73,10 @@ open class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.basea
             createKeyboardHeightProvider()
             keyboardHeightRootView()?.post { keyboardHighProvider?.start() }
         }
+    }
+
+    override fun onViewCreated() {
+        initToolbar(R.id.base_app_toolbar)
     }
 
     open fun getLayoutRes(): Int {

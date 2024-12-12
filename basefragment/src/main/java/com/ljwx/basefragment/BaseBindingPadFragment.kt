@@ -32,17 +32,11 @@ abstract class BaseBindingPadFragment<Binding : ViewDataBinding, BindingPad : Vi
         } else {
             mBinding = DataBindingUtil.inflate(inflater, getLayoutRes(), container, false)
         }
-        quickLayout()
         return if (isPad) mBindingPad.root else mBinding.root
     }
 
     override fun getLayoutRes(): Int {
         return if (isPad) layoutResPad else layoutRes
-    }
-
-    private fun quickLayout() {
-        useCommonStateLayout()
-        useCommonRefreshLayout()
     }
 
     override fun onDestroy() {

@@ -6,6 +6,9 @@ import com.ljwx.baseapp.view.IViewStateLayout
 import com.ljwx.baseapp.constant.BaseLayoutStatus
 
 interface IPageStateLayout {
+
+    fun enableAutoInitStateLayout()
+
     /**
      * 初始化多状态布局
      */

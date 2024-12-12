@@ -4,4 +4,6 @@ interface IPageActivity {
 
     fun getScreenOrientation(): Int?
 
+    fun onViewCreated()
+
 }

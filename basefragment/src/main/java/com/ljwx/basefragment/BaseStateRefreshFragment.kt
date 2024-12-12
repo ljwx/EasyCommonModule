@@ -43,8 +43,8 @@ abstract class BaseStateRefreshFragment(@LayoutRes layoutResID: Int = R.layout.b
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        useCommonStateLayout()
-        useCommonRefreshLayout()
+        enableAutoInitStateLayout()
+        enableAutoInitRefreshLayout()
 
     }
 
@@ -83,7 +83,7 @@ abstract class BaseStateRefreshFragment(@LayoutRes layoutResID: Int = R.layout.b
     /**
      * 快速状态布局
      */
-    open fun useCommonStateLayout() {
+    override fun enableAutoInitStateLayout() {
         val stateLayout = view?.findViewById<View>(R.id.base_app_quick_state_layout)
         if (stateLayout != null && stateLayout is IViewStateLayout) {
             initStateLayout(stateLayout)
@@ -93,7 +93,7 @@ abstract class BaseStateRefreshFragment(@LayoutRes layoutResID: Int = R.layout.b
     /**
      * 快速刷新布局
      */
-    open fun useCommonRefreshLayout() {
+    override fun enableAutoInitRefreshLayout() {
         val refreshLayout = view?.findViewById<View>(R.id.base_app_quick_refresh_layout)
         if (refreshLayout != null && refreshLayout is IViewRefreshLayout) {
             initRefreshLayout(refreshLayout)
