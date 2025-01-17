@@ -2,7 +2,7 @@ package com.ljwx.baseutils.webview
 
 import android.content.Context
 //import com.alibaba.pdns.DNSResolver
-import com.codemao.pythonmobile.utils.DebugLog
+//import com.codemao.pythonmobile.utils.DebugLog
 
 object PythonAliDnsUtils {
 

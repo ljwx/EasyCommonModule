@@ -8,7 +8,7 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import androidx.annotation.RequiresApi
 //import com.alibaba.pdns.DNSResolver
-import com.codemao.pythonmobile.utils.DebugLog
+//import com.codemao.pythonmobile.utils.DebugLog
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
