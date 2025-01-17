@@ -256,10 +256,10 @@ object BroadcastUtils {
         Log.e(TAG, String.format("4.onResponseToClient：requestId = %s", requestId))
         Log.e(TAG, "4.收到：")
         val str = String(reqeustBytes) + " hello>"
-        characteristicRead.setValue(str.toByteArray())
-        gattServer?.notifyCharacteristicChanged(device, characteristicRead, false)
-        Log.i(TAG, "4.响应：$str")
-        MainActivity.handler.obtainMessage(MainActivity.DEVICE, String(reqeustBytes)).sendToTarget()
+//        characteristicRead.setValue(str.toByteArray())
+//        gattServer?.notifyCharacteristicChanged(device, characteristicRead, false)
+//        Log.i(TAG, "4.响应：$str")
+//        MainActivity.handler.obtainMessage(MainActivity.DEVICE, String(reqeustBytes)).sendToTarget()
     }
 
 
@@ -310,41 +310,41 @@ object BroadcastUtils {
 
     }
 
-    fun startService(context: Context) {
-        // 注意：必须要开启可连接的BLE广播，其它设备才能发现并连接BLE服务端!
-        // =============启动BLE蓝牙服务端======================================
-        val service = BluetoothGattService(UUID_SERVICE, BluetoothGattService.SERVICE_TYPE_PRIMARY)
-
-        //添加可读+通知characteristic
-        val characteristicRead = BluetoothGattCharacteristic(
-            UUID_CHAR_READ_NOTIFY,
-            BluetoothGattCharacteristic.PROPERTY_READ or BluetoothGattCharacteristic.PROPERTY_NOTIFY,
-            BluetoothGattCharacteristic.PERMISSION_READ
-        )
-        characteristicRead.addDescriptor(
-            BluetoothGattDescriptor(
-                UUID_DESC_NOTITY,
-                BluetoothGattCharacteristic.PERMISSION_WRITE
-            )
-        )
-        service.addCharacteristic(characteristicRead)
-
-        //添加可写characteristic
-        val characteristicWrite = BluetoothGattCharacteristic(
-            UUID_CHAR_WRITE,
-            BluetoothGattCharacteristic.PROPERTY_WRITE,
-            BluetoothGattCharacteristic.PERMISSION_WRITE
-        )
-        service.addCharacteristic(characteristicWrite)
-
-        if (bluetoothManager != null) {
-            gattServer =
-                bluetoothManager?.openGattServer(context, mBluetoothGattServerCallback)
-        }
-
-        gattServer.addService(service)
-
-
-    }
+//    fun startService(context: Context) {
+//        // 注意：必须要开启可连接的BLE广播，其它设备才能发现并连接BLE服务端!
+//        // =============启动BLE蓝牙服务端======================================
+//        val service = BluetoothGattService(UUID_SERVICE, BluetoothGattService.SERVICE_TYPE_PRIMARY)
+//
+//        //添加可读+通知characteristic
+//        val characteristicRead = BluetoothGattCharacteristic(
+//            UUID_CHAR_READ_NOTIFY,
+//            BluetoothGattCharacteristic.PROPERTY_READ or BluetoothGattCharacteristic.PROPERTY_NOTIFY,
+//            BluetoothGattCharacteristic.PERMISSION_READ
+//        )
+//        characteristicRead.addDescriptor(
+//            BluetoothGattDescriptor(
+//                UUID_DESC_NOTITY,
+//                BluetoothGattCharacteristic.PERMISSION_WRITE
+//            )
+//        )
+//        service.addCharacteristic(characteristicRead)
+//
+//        //添加可写characteristic
+//        val characteristicWrite = BluetoothGattCharacteristic(
+//            UUID_CHAR_WRITE,
+//            BluetoothGattCharacteristic.PROPERTY_WRITE,
+//            BluetoothGattCharacteristic.PERMISSION_WRITE
+//        )
+//        service.addCharacteristic(characteristicWrite)
+//
+//        if (bluetoothManager != null) {
+//            gattServer =
+//                bluetoothManager?.openGattServer(context, mBluetoothGattServerCallback)
+//        }
+//
+//        gattServer.addService(service)
+//
+//
+//    }
 
 }
