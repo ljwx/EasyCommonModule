@@ -2,9 +2,10 @@ package com.ljwx.baseactivity.fast
 
 import androidx.annotation.LayoutRes
 import androidx.databinding.ViewDataBinding
+import com.ljwx.baseapp.extensions.showToast
 import com.ljwx.baseapp.vm.BaseViewModel
 
-open abstract class QuickMainActivity<Binding : ViewDataBinding, ViewModel : BaseViewModel<*>>(@LayoutRes layoutResID: Int) :
+abstract class QuickMainActivity<Binding : ViewDataBinding, ViewModel : BaseViewModel<*>>(@LayoutRes layoutResID: Int) :
     QuickTabLayoutActivity<Binding, ViewModel>(layoutResID) {
 
     /**
@@ -35,13 +36,21 @@ open abstract class QuickMainActivity<Binding : ViewDataBinding, ViewModel : Bas
      */
     override fun onBackPressed() {
         if (isFastClick()) {
-            super.onBackPressed()
-            this.finishAffinity()
-            System.exit(0)
+            onDoubleBackPress()
             return
         }
+        onSingleBackPressTips()
+    }
+
+    open fun onDoubleBackPress() {
+        super.onBackPressed()
+        this.finishAffinity()
+        System.exit(0)
+    }
+
+    open fun onSingleBackPressTips() {
         mExistTips?.let {
-            
+            showToast(it)
         }
     }
 
