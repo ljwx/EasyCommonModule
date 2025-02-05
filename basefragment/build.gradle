@@ -47,7 +47,7 @@ dependencies {
     implementation project(path: ':baseapp')
     implementation project(path: ':basedialog')
 
-    api 'androidx.fragment:fragment-ktx:1.5.2'
+//    api 'androidx.fragment:fragment-ktx:1.5.2'
 
     implementation project(path: ':baserouter')
 
