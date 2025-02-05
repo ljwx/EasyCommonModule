@@ -2,7 +2,6 @@ package com.ljwx.baselanguage
 
 import android.content.Context
 import android.content.res.Configuration
-import androidx.annotation.IntDef
 import com.blankj.utilcode.util.LanguageUtils
 import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.StringUtils
