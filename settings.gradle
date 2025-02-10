@@ -10,6 +10,7 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
+        maven {url 'https://developer.huawei.com/repo/'}
     }
 }
 dependencyResolutionManagement {
@@ -25,6 +26,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url 'https://jitpack.io' }
+        maven {url 'https://developer.huawei.com/repo/'}
         maven {
             url uri(new File(rootDir, "repo"))
         }
@@ -68,3 +70,4 @@ include ':baseble'
 include ':basemediaplayer'
 include ':providefloatwindow'
 include ':baserecordaudio'
+include ':providespeechrecognizer'

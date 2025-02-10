@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:name=".AppApplication"
@@ -15,7 +19,9 @@
         android:roundIcon="@mipmap/geshui_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.NewBaseModule"
-        tools:targetApi="31">
+        tools:targetApi="31"
+        android:usesCleartextTraffic="true"
+        tools:replace="android:allowBackup">
         <activity android:name=".geshui.GeShuiListActivity" />
         <activity android:name=".geshui.GeShuiYearActivity" />
         <activity android:name=".geshui.GeShuiHomeActivity" />

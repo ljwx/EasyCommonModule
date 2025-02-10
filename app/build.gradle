@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
+    id 'com.huawei.agconnect'
 }
 
 android {
@@ -26,6 +27,8 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+//        resConfigs "en", "zh-rCN"
 
         //arouter
         kapt {
@@ -106,6 +109,7 @@ dependencies {
     implementation project(path: ':baseble')
     implementation project(path: ':baserecordaudio')
     implementation project(path: ':basepermission')
+    implementation project(path: ':providespeechrecognizer')
 
     implementation 'io.github.ljwx:SplitTextView:0.3.8'
 
