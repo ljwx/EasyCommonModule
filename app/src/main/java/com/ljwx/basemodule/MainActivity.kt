@@ -58,20 +58,22 @@ class MainActivity :
                 test = true
             }
         })
+        FeatureTest.init(this)
         mBinding.button.singleClick {
 //            routerTo(ConstRouter.SECOND_ACTIVITY).start()
-            if (!test) {
-                RecordAudioUtils.startTest(this@MainActivity)
-                test = true
-            } else {
-                RecordAudioUtils.stopTest()
-                test = false
-                RecordAudioManager.getInstance().getPathName()?.let {
-                    player.setMediaItem(it)
-                    player.prepare()
-                    player.start()
-                }
-            }
+//            if (!test) {
+//                RecordAudioUtils.startTest(this@MainActivity)
+//                test = true
+//            } else {
+//                RecordAudioUtils.stopTest()
+//                test = false
+//                RecordAudioManager.getInstance().getPathName()?.let {
+//                    player.setMediaItem(it)
+//                    player.prepare()
+//                    player.start()
+//                }
+//            }
+            FeatureTest.start()
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

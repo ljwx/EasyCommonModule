@@ -16,8 +16,8 @@ class BaseToolbarFragment :
     }
 
 
-    override fun lazyInit() {
-        super.lazyInit()
+    override fun onLazyInit() {
+        super.onLazyInit()
         Log.d("ljwx2", "第一个可见")
     }
 }

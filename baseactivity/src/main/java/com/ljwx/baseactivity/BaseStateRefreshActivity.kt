@@ -28,11 +28,6 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
     private var mStateLayout: IViewStateLayout? = null
 
     /**
-     * 子线程切换多状态布局
-     */
-    private var mStateRunnable: Runnable? = null
-
-    /**
      * 下拉刷新控件
      */
     private var mRefreshLayout: IViewRefreshLayout? = null
@@ -50,7 +45,6 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
 
     override fun onViewCreated() {
         super.onViewCreated()
-        BaseModuleLog.d(TAG, "静默初始化多状态和刷新")
         enableAutoInitStateLayout()
         enableAutoInitRefreshLayout()
     }
@@ -62,7 +56,11 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
         transparent: Boolean,
         level: Int
     ) {
+        if (!show || (isPopupLoadingShowing()) || isFinishing) {
+            return
+        }
         runOnUiThread {
+            BaseModuleLog.dDialog("自动主线程显示loading", className)
 //            mPopupLoading.setCancelable(cancelable)
 //            dialog.setCanceledOnTouchOutside(canceledOnTouchOutside)
             mPopupLoading.showPopup(show, cancelable, message, backgroundTransparent = transparent)
@@ -70,7 +68,10 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
     }
 
     override fun dismissPopLoading(dismiss: Boolean) {
-        mPopupLoading.dismiss()
+        runOnUiThread {
+            BaseModuleLog.dDialog("自动主线程取消loading", className)
+            mPopupLoading.dismiss()
+        }
     }
 
     override fun isPopupLoadingShowing(): Boolean = mPopupLoading.isShowing()
@@ -112,7 +113,7 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
      * @param stateLayout 多状态布局容器
      */
     override fun initStateLayout(stateLayout: IViewStateLayout?) {
-        BaseModuleLog.d(TAG, "初始化多状态布局")
+        BaseModuleLog.dStateRefresh("初始化多状态布局", className)
         this.mStateLayout = stateLayout
     }
 
@@ -121,21 +122,25 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
         id: Int,
         listener: View.OnClickListener,
     ) {
+        BaseModuleLog.dStateRefresh("添加多状态下的点击事件id:$id", className)
         mStateLayout?.addClickListener(state, id, listener)
     }
 
     override fun showLoadingStateInit() {
         if (!stateLoadingDataSucceeded) {
+            BaseModuleLog.dStateRefresh("首次加载数据,显示stateLoading", className)
             showStateLoading()
         }
     }
 
     override fun loadingStateInitComplete() {
+        BaseModuleLog.dStateRefresh("首次数据加载成功", className)
         stateLoadingDataSucceeded = true
     }
 
     override fun showErrorStateInit(): Boolean {
         if (!stateLoadingDataSucceeded) {
+            BaseModuleLog.dStateRefresh("首次加载数据失败,显示stateError", className)
             showStateError()
             return true
         }
@@ -150,16 +155,12 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
      * @param tag 携带数据
      */
     override fun showStateLayout(state: Int, show: Boolean, view: View?, tag: Any?) {
+        BaseModuleLog.dStateRefresh("自动主线程修改当前多状态:$show--$state", className)
         if (!show || isFinishing) {
             return
         }
-        if (isMainThread) {
+        runOnUiThread {
             mStateLayout?.showStateView(state, view, tag)
-        } else {
-            mStateRunnable = mStateRunnable ?: Runnable {
-                mStateLayout?.showStateView(state, view, tag)
-            }
-            runOnUiThread(mStateRunnable)
         }
     }
 
@@ -179,7 +180,7 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
 
     override fun initRefreshLayout(refreshLayout: IViewRefreshLayout?) {
         if (enableRefresh()) {
-            BaseModuleLog.d(TAG, "view,启用下拉刷新")
+            BaseModuleLog.dStateRefresh("启用快捷下拉刷新,refreshView", className)
             refreshLayout?.enableRefresh(true)
             this.mRefreshLayout = refreshLayout
             refreshLayout?.setRefreshPage(this)
@@ -191,7 +192,7 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
     override fun initRefreshLayout(refreshId: Int) {
         this.mRefreshLayout = findViewById<View>(refreshId) as? IViewRefreshLayout
         if (enableRefresh()) {
-            BaseModuleLog.d(TAG, "id,启用下拉刷新")
+            BaseModuleLog.dStateRefresh("启用快捷下拉刷新,refresh id")
             this.mRefreshLayout?.enableRefresh(true)
             this.mRefreshLayout?.setRefreshPage(this)
         } else {
@@ -203,12 +204,12 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
      * 下拉刷新逻辑
      */
     override fun refreshViewOnRefresh() {
-        BaseModuleLog.d(TAG, "下拉刷新控件,触发刷新")
+        BaseModuleLog.dStateRefresh("下拉刷新控件,触发刷新", className)
 
     }
 
     override fun onLoadData(refresh: Boolean, params: String?) {
-
+        BaseModuleLog.dDialog("触发onLoadData,是否刷新:$refresh", className)
     }
 
 //    override fun onLoadData(refresh: Boolean, type: Long?) {
@@ -219,6 +220,7 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
      * 刷新结束
      */
     override fun pullRefreshFinish() {
+        BaseModuleLog.dStateRefresh("下拉刷新控件刷新完成", className)
         runOnUiThread {
             mRefreshLayout?.refreshFinish()
         }
@@ -227,7 +229,6 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
     override fun onDestroy() {
         mPopupLoading.dismiss()
         mStateLayout = null
-        mStateRunnable = null
         mRefreshLayout = null
         super.onDestroy()
     }

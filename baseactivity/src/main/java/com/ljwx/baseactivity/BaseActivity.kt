@@ -37,7 +37,8 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
     BaseToolsActivity(), IPageStatusBar, IPageToolbar, IPageLocalEvent,
     IPageDialogTips, IPageProcessStep, IPageActivity, IPageStartPage, IPageKeyboardHeight {
 
-    open val TAG = this.javaClass.simpleName + BaseLogTag.ACTIVITY
+    protected val className = this.javaClass.simpleName
+    open val TAG = className + BaseLogTag.ACTIVITY
 
     /**
      * 键盘
@@ -64,15 +65,22 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        BaseModuleLog.d(TAG, "生命周期onCreate")
+        BaseModuleLog.dActivity("生命周期onCreate", className)
         setStatusBarLight(true)
         getScreenOrientation()?.let {
             requestedOrientation = it
+            BaseModuleLog.dActivity("设置屏幕方向:$it", className)
         }
         if (enableKeyboardHeightListener()) {
             createKeyboardHeightProvider()
             keyboardHeightRootView()?.post { keyboardHighProvider?.start() }
+            BaseModuleLog.dKeyboard("启用键盘高度监听", className)
         }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        BaseModuleLog.dActivity("生命周期onWindowFocusChanged,hasFocus:$hasFocus")
     }
 
     override fun onViewCreated() {
@@ -86,20 +94,21 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
     /**
      * 路由快速跳转
      */
-    open fun startActivity(clazz: Class<*>) {
-        startActivity(clazz, null)
-    }
-
-    override fun startActivity(clazz: Class<*>, requestCode: Int?) {
-        if (requestCode == null) {
-            startActivity(Intent(this, clazz))
-        } else {
-            startActivityForResult(Intent(this, clazz), requestCode)
+    override fun startActivity(clazz: Class<*>, from: String?, requestCode: Int?) {
+        val intent = Intent(this, clazz)
+        if (!from.isNullOrEmpty()) {
+            intent.putExtra(BaseConstBundleKey.FROM_TYPE, from)
         }
+        if (requestCode == null) {
+            startActivity(intent)
+        } else {
+            startActivityForResult(intent, requestCode)
+        }
+        BaseModuleLog.dActivityStart("打开其他activity:" + clazz.simpleName, className)
     }
 
     override fun routerTo(path: String): IPostcard {
-        BaseModuleLog.d(TAG, "路由跳转到:$path")
+        BaseModuleLog.dActivityStart("路由跳转到:$path", className)
         return RouterPostcard(path)
     }
 
@@ -124,6 +133,7 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
                 false
             )
         }
+        BaseModuleLog.dActivity("设置状态栏亮色:$light", className)
     }
 
     override fun setStatusBarTransparent(transparent: Boolean) {
@@ -133,38 +143,42 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
     }
 
     override fun initToolbar(toolbarId: Int): Toolbar? {
-        BaseModuleLog.d(TAG, "通过id初始化toolbar")
         val toolbar = findViewById(toolbarId) as? Toolbar
         return setToolbar(toolbar)
     }
 
     override fun initToolbar(toolbar: Toolbar?): Toolbar? {
-        BaseModuleLog.d(TAG, "通过Toolbar控件初始化toolbar")
         return setToolbar(toolbar)
     }
 
     private fun setToolbar(toolbar: Toolbar?): Toolbar? {
         toolbar?.let {
-            BaseModuleLog.d(TAG, "设置Toolbar返回")
             setSupportActionBar(toolbar)
             toolbar?.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
+            BaseModuleLog.dToolbar("初始化toolbar并返回", className)
         }
         return toolbar
     }
 
     override fun setToolbarTitle(title: CharSequence) {
         supportActionBar?.title = title
+        BaseModuleLog.dToolbar("设置toolbar的标题", className)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        BaseModuleLog.d(TAG, "生命周期onSaveInstanceState")
+        BaseModuleLog.dActivity("生命周期onSaveInstanceState", className)
         mStateSaved = true
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        BaseModuleLog.dActivity("生命周期onRestoreInstanceState", className)
     }
 
     override fun onResume() {
         super.onResume()
-        BaseModuleLog.d(TAG, "生命周期onResume")
+        BaseModuleLog.dActivity("生命周期onResume", className)
         mStateSaved = false
         if (enableKeyboardHeightListener()) {
             setKeyboardHeightListener()
@@ -173,13 +187,13 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
 
     override fun onStop() {
         super.onStop()
-        BaseModuleLog.d(TAG, "生命周期onStop")
+        BaseModuleLog.dActivity("生命周期onStop", className)
         mStateSaved = true
     }
 
     override fun onStart() {
         super.onStart()
-        BaseModuleLog.d(TAG, "生命周期onStart")
+        BaseModuleLog.dActivity("生命周期onStart", className)
         mStateSaved = false
     }
 
@@ -188,7 +202,7 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
         content: String?,
         positiveText: String?
     ): Dialog? {
-        BaseModuleLog.d(TAG, "快速显示弹窗")
+        BaseModuleLog.dDialog("快速显示弹窗", className)
         return showDialogTips(title, content, positiveText, null, null, null, false, null, null)
     }
 
@@ -213,7 +227,7 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
         negativeListener: View.OnClickListener?,
         positiveListener: View.OnClickListener?
     ): Dialog? {
-        BaseModuleLog.d(TAG, "快速显示弹窗")
+        BaseModuleLog.dDialog("快速显示弹窗", className)
 //        if (tag.notNullOrBlank()) {
 //            val cache = supportFragmentManager.findFragmentByTag(tag)
 //            if (cache != null && cache is BaseDialogFragment) {
@@ -258,7 +272,7 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 intent.action?.let {
-                    BaseModuleLog.d(TAG, "接收到事件广播:$it")
+                    BaseModuleLog.dEvent("接收到事件广播:$it", className)
                     if (intentFilter.matchAction(it)) {
                         val type =
                             intent.getLongExtra(BaseConstBundleKey.LOCAL_EVENT_COMMON_TYPE, -1)
@@ -271,7 +285,7 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
         }
         broadcastReceivers = broadcastReceivers ?: HashMap()
         broadcastReceivers?.put(action, receiver)
-        BaseModuleLog.d(TAG, "注册事件广播:$action")
+        BaseModuleLog.dEvent("注册事件广播:$action", className)
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
     }
 
@@ -282,7 +296,7 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
     override fun unregisterLocalEvent(action: String?) {
         action?.let {
             broadcastReceivers?.get(it)?.let {
-                BaseModuleLog.d(TAG, "注销事件广播:$action")
+                BaseModuleLog.dEvent("注销事件广播:$action", className)
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(it)
             }
             broadcastReceivers?.remove(it)
@@ -295,10 +309,10 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
     }
 
     override fun onBackPressed() {
-        BaseModuleLog.d(TAG, "触发onBackPress")
+        BaseModuleLog.dActivity("触发onBackPress", className)
         onBackPressInterceptors?.forEach {
             if (it.invoke()) {
-                BaseModuleLog.d(TAG, "返回被拦截")
+                BaseModuleLog.dActivity("返回被拦截", className)
                 return
             }
         }
@@ -347,6 +361,7 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
 
     override fun setKeyboardHeightListener() {
         keyboardHighProvider?.setKeyboardHeightListener { height, orientation ->
+            BaseModuleLog.dKeyboard("keyboardHeightListener:$height", className)
             var keyBoardHeight = 0
             if (mScreenHeight <= 0) {
                 hidePopBottom = height
@@ -374,23 +389,23 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
     }
 
     override fun onKeyboardHeightChange(show: Boolean, height: Int) {
-
+        BaseModuleLog.dKeyboard("触发键盘高度变化:$height", className)
     }
 
     override fun onPause() {
         super.onPause()
-        BaseModuleLog.d(TAG, "生命周期onPause")
+        BaseModuleLog.dActivity("生命周期onPause", className)
         keyboardHighProvider?.setKeyboardHeightListener(null)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        BaseModuleLog.d(TAG, "生命周期onConfigurationChanged")
+        BaseModuleLog.dActivity("生命周期onConfigurationChanged", className)
     }
 
     override fun onRestart() {
         super.onRestart()
-        BaseModuleLog.d(TAG, "生命周期onRestart")
+        BaseModuleLog.dActivity("生命周期onRestart", className)
     }
 
     inline fun <reified F : Fragment> fragmentInstance(fromType: Int): F? {
@@ -400,12 +415,12 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
     override fun overridePendingTransition(enterAnim: Int, exitAnim: Int) {
         super.overridePendingTransition(enterAnim, exitAnim)
 //        overridePendingTransition(0, R.anim.bottom_out)
-        BaseModuleLog.d(TAG, "进出动画")
+//        BaseModuleLog.dActivity("进出动画", className)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        BaseModuleLog.d(TAG, "生命周期onDestroy")
+        BaseModuleLog.dActivity("生命周期onDestroy", className)
         broadcastReceivers?.keys?.toList()?.forEach {
             unregisterLocalEvent(it)
         }

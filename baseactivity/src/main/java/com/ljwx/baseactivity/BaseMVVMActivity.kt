@@ -34,7 +34,7 @@ abstract class BaseMVVMActivity<Binding : ViewDataBinding, ViewModel : BaseViewM
     open fun createViewModel(): ViewModel {
         val type = javaClass.genericSuperclass as ParameterizedType
         val modelClass = type.actualTypeArguments.getOrNull(1) as Class<ViewModel>
-        BaseModuleLog.d(TAG, "创建viewmodel")
+        BaseModuleLog.dViewmodel("创建viewmodel", className)
         return ViewModelProvider(this)[modelClass]
     }
 

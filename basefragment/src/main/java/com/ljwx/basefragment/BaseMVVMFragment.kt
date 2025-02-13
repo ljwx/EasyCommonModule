@@ -43,16 +43,23 @@ abstract class BaseMVVMFragment<Binding : ViewDataBinding, ViewModel : BaseViewM
     open fun createViewModel(): ViewModel {
         val type = javaClass.genericSuperclass as ParameterizedType
         val modelClass = type.actualTypeArguments.getOrNull(1) as Class<ViewModel>
-        BaseModuleLog.d(TAG, "创建viewmodel")
-        return if (viewModelProviderFromFragment() != null)
+        BaseModuleLog.dViewmodel("创建viewmodel", className)
+        return if (viewModelProviderFromFragment() != null) {
+            BaseModuleLog.dViewmodel("使用其他fragment的域创建viewmodel", className)
             mViewModelScope.getFragmentScopeViewModel(
                 viewModelProviderFromFragment()!!,
                 modelClass
             )
-        else if (viewModelProviderFromActivity()) mViewModelScope.getActivityScopeViewModel(
-            requireActivity(),
-            modelClass
-        ) else ViewModelProvider(this)[modelClass]
+        } else if (viewModelProviderFromActivity()) {
+            BaseModuleLog.dViewmodel("使用宿主activity的域创建viewmodel", className)
+            mViewModelScope.getActivityScopeViewModel(
+                requireActivity(),
+                modelClass
+            )
+        } else {
+            BaseModuleLog.dViewmodel("使用自己的域创建viewmodel", className)
+            ViewModelProvider(this)[modelClass]
+        }
     }
 
     open fun viewModelProviderFromActivity() = false

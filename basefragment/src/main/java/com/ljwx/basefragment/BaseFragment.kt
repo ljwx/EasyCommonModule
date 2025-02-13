@@ -37,7 +37,7 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
     IPageLocalEvent,
     IPageDialogTips, IPageProcessStep, IPageStartPage, IPageKeyboardHeight {
 
-    open val TAG = this.javaClass.simpleName + BaseLogTag.FRAGMENT
+    protected val className = this.javaClass.simpleName
 
     protected var mActivity: AppCompatActivity? = null
 
@@ -67,18 +67,18 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        BaseModuleLog.d(TAG, "生命周期onAttach")
+        BaseModuleLog.dFragment("生命周期onAttach", className)
         mActivity = context as AppCompatActivity
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        BaseModuleLog.d(TAG, "生命周期onActivityCreated")
+        BaseModuleLog.dFragment("生命周期onActivityCreated", className)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        BaseModuleLog.d(TAG, "生命周期onCreate")
+        BaseModuleLog.dFragment("生命周期onCreate", className)
     }
 
     open fun getLayoutRes(): Int {
@@ -90,13 +90,13 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        BaseModuleLog.d(TAG, "生命周期onCreateView")
+        BaseModuleLog.dFragment("生命周期onCreateView", className)
         return LayoutInflater.from(requireContext()).inflate(getLayoutRes(), container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        BaseModuleLog.d(TAG, "生命周期onViewCreated")
+        BaseModuleLog.dFragment("生命周期onViewCreated", className)
         if (enableKeyboardHeightListener()) {
             createKeyboardHeightProvider()
             keyboardHeightRootView()?.post { keyboardHighProvider?.start() }
@@ -105,9 +105,9 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
 
     override fun onResume() {
         super.onResume()
-        BaseModuleLog.d(TAG, "生命周期onResume")
+        BaseModuleLog.dFragment("生命周期onResume", className)
         if (!isLazyInitialized && !isHidden) {
-            lazyInit()
+            onLazyInit()
             isLazyInitialized = true
         }
         if (enableKeyboardHeightListener()) {
@@ -118,12 +118,24 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
     /**
      * 路由快速跳转
      */
-    override fun startActivity(clazz: Class<*>, requestCode: Int?) {
-        context?.startActivity(Intent(context, clazz))
+    override fun startActivity(clazz: Class<*>, from: String?, requestCode: Int?) {
+        if (context == null) {
+            return
+        }
+        val intent = Intent(context, clazz)
+        if (!from.isNullOrEmpty()) {
+            intent.putExtra(BaseConstBundleKey.FROM_TYPE, from)
+        }
+        if (requestCode == null) {
+            startActivity(intent)
+        } else {
+            startActivityForResult(intent, requestCode)
+        }
+        BaseModuleLog.dActivityStart("打开其他activity:" + clazz.simpleName, className)
     }
 
     override fun routerTo(path: String): IPostcard {
-        BaseModuleLog.d(TAG, "路由跳转到:$path")
+        BaseModuleLog.dActivityStart("路由跳转到:$path", className)
         return RouterPostcard(path)
     }
 
@@ -185,7 +197,7 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
             }
             //是否反转按钮
             buttonsReversal(reversalButtons)
-            BaseModuleLog.d(TAG, "${(tag ?: content) ?: "tag为空"},dialog新创建")
+            BaseModuleLog.dFragment("${(tag ?: content) ?: "tag为空"},dialog新创建", className)
             return showDialog(requireContext())
         }
     }
@@ -204,7 +216,7 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 intent.action?.let {
-                    BaseModuleLog.d(TAG, "接收到事件广播:$it")
+                    BaseModuleLog.dEvent("接收到事件广播:$it", className)
                     if (intentFilter.matchAction(it)) {
                         val type =
                             intent.getLongExtra(BaseConstBundleKey.LOCAL_EVENT_COMMON_TYPE, -1)
@@ -217,7 +229,7 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
         }
         broadcastReceivers = broadcastReceivers ?: HashMap()
         broadcastReceivers?.put(action, receiver)
-        BaseModuleLog.d(TAG, "注册事件广播:$action")
+        BaseModuleLog.dEvent("注册事件广播:$action", className)
         context?.let {
             LocalBroadcastManager.getInstance(it).registerReceiver(receiver, intentFilter)
         }
@@ -231,7 +243,7 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
         action?.let {
             broadcastReceivers?.get(action)?.let {
                 context?.let { c ->
-                    BaseModuleLog.d(TAG, "注销事件广播:$action")
+                    BaseModuleLog.dEvent("注销事件广播:$action", className)
                     LocalBroadcastManager.getInstance(c).unregisterReceiver(it)
                 }
             }
@@ -239,8 +251,8 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
         }
     }
 
-    open fun lazyInit() {
-        BaseModuleLog.d(TAG, "触发懒加载")
+    open fun onLazyInit() {
+        BaseModuleLog.dFragment("触发懒加载", className)
     }
 
 
@@ -298,7 +310,7 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
 
     override fun setKeyboardHeightListener() {
         keyboardHighProvider?.setKeyboardHeightListener { height, orientation ->
-            BaseModuleLog.d(TAG, "keyboardHeightListener:$height")
+            BaseModuleLog.dKeyboard("keyboardHeightListener:$height", className)
             var keyBoardHeight = 0
             if (mScreenHeight <= 0) {
                 hidePopBottom = height
@@ -314,7 +326,6 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
                 mScreenHeight = keyboardHeightRootView()?.getHeight() ?: 2000
             }
             if (isKeyboardShow(height, hidePopBottom)) { //软键盘弹出
-                BaseModuleLog.d(TAG, "keyboardHeightListener,判定键盘弹出")
                 onKeyboardHeightChange(true, keyBoardHeight)
             } else {
                 onKeyboardHeightChange(false, 0)
@@ -327,7 +338,7 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
     }
 
     override fun onKeyboardHeightChange(show: Boolean, height: Int) {
-
+        BaseModuleLog.dKeyboard("触发键盘高度变化:$height", className)
     }
 
     /*----------------------------------------------------------------------------------------*/
@@ -335,47 +346,52 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
     open fun getConditionType(): Boolean =
         arguments?.getBoolean(BaseConstBundleKey.IS_CONDITION_TYPE, false) ?: false
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        BaseModuleLog.dFragment("生命周期onSaveInstanceState", className)
+    }
+
     override fun onPause() {
         super.onPause()
-        BaseModuleLog.d(TAG, "生命周期onPause")
+        BaseModuleLog.dFragment("生命周期onPause", className)
         keyboardHighProvider?.setKeyboardHeightListener(null)
     }
 
     override fun onStart() {
         super.onStart()
-        BaseModuleLog.d(TAG, "生命周期onStart")
+        BaseModuleLog.dFragment("生命周期onStart", className)
     }
 
     override fun onStop() {
         super.onStop()
-        BaseModuleLog.d(TAG, "生命周期onStop")
+        BaseModuleLog.dFragment("生命周期onStop", className)
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        BaseModuleLog.d(TAG, "生命周期onHiddenChanged,hidden:$hidden")
+        BaseModuleLog.dFragment("生命周期onHiddenChanged,hidden:$hidden", className)
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        BaseModuleLog.d(TAG, "生命周期onLowMemory")
+        BaseModuleLog.dFragment("生命周期onLowMemory", className)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        BaseModuleLog.d(TAG, "执行onDestroyView")
+        BaseModuleLog.dFragment("执行onDestroyView", className)
         isLazyInitialized = false
     }
 
     override fun onDetach() {
         super.onDetach()
-        BaseModuleLog.d(TAG, "执行onDetach")
+        BaseModuleLog.dFragment("执行onDetach", className)
         mActivity = null
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        BaseModuleLog.d(TAG, "执行onDestroy")
+        BaseModuleLog.dFragment("执行onDestroy", className)
         broadcastReceivers?.keys?.toList()?.forEach {
             unregisterLocalEvent(it)
         }

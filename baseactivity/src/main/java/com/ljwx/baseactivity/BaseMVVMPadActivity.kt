@@ -36,7 +36,7 @@ abstract class BaseMVVMPadActivity<Binding : ViewDataBinding, BindingPad : ViewD
     open fun createViewModel(): ViewModel {
         val type = javaClass.genericSuperclass as ParameterizedType
         val modelClass = type.actualTypeArguments.getOrNull(2) as Class<ViewModel>
-        BaseModuleLog.d(TAG, "创建viewmodel")
+        BaseModuleLog.dViewmodel("创建viewmodel", className)
         return ViewModelProvider(this)[modelClass]
     }
 
