@@ -73,7 +73,7 @@ class MainActivity :
 //                    player.start()
 //                }
 //            }
-            FeatureTest.start()
+            FeatureTest.testClick(this@MainActivity)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

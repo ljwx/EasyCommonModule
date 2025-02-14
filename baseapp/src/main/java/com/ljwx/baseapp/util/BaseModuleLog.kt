@@ -23,6 +23,7 @@ object BaseModuleLog {
     private val stateRefresh = prefix + "stateRefresh"
     private val viewmodel = prefix + "viewmodel"
     private val repository = prefix + "repository"
+    private val permission = prefix + "permission"
 
     fun i(tag: String, msg: String) {
         Log.i(tag, msg)
@@ -78,6 +79,10 @@ object BaseModuleLog {
 
     fun dRepository(content: String, className: String? = null) {
         Log.d(repository, content + (if (className.isNullOrEmpty()) "" else " $className"))
+    }
+
+    fun dPermission(content: String, className: String? = null) {
+        Log.d(permission, content + (if (className.isNullOrEmpty()) "" else " $className"))
     }
 
 }

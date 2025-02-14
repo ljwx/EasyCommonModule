@@ -1,27 +1,37 @@
 package com.ljwx.baseactivity
 
+import android.Manifest
 import android.app.Dialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.LayoutRes
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.ljwx.baseactivity.statusbar.BaseStatusBar
 import com.ljwx.baseapp.R
 import com.ljwx.baseapp.constant.BaseConstBundleKey
 import com.ljwx.baseapp.constant.BaseLogTag
+import com.ljwx.baseapp.extensions.showToast
 import com.ljwx.baseapp.keyboard.KeyboardHeightProvider
 import com.ljwx.baseapp.page.IPageActivity
 import com.ljwx.baseapp.page.IPageDialogTips
 import com.ljwx.baseapp.page.IPageKeyboardHeight
 import com.ljwx.baseapp.page.IPageLocalEvent
+import com.ljwx.baseapp.page.IPagePermissions
 import com.ljwx.baseapp.page.IPageProcessStep
 import com.ljwx.baseapp.page.IPageStartPage
 import com.ljwx.baseapp.page.IPageStatusBar
@@ -35,10 +45,17 @@ import com.ljwx.router.RouterPostcard
 
 abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.baseapp.R.layout.baseapp_state_layout_empty) :
     BaseToolsActivity(), IPageStatusBar, IPageToolbar, IPageLocalEvent,
-    IPageDialogTips, IPageProcessStep, IPageActivity, IPageStartPage, IPageKeyboardHeight {
+    IPageDialogTips, IPageProcessStep, IPageActivity, IPageStartPage, IPageKeyboardHeight,
+    IPagePermissions {
 
     protected val className = this.javaClass.simpleName
     open val TAG = className + BaseLogTag.ACTIVITY
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
+            onPermissionsResult(result)
+        }
+    private val permissionsListeners by lazy { ArrayList<(result: Map<String, @JvmSuppressWildcards Boolean>) -> Unit>() }
 
     /**
      * 键盘
@@ -338,6 +355,7 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
 
     override fun commonStep3ObserveData() {
 
+
     }
 
     override fun commonStep4SetViewListener() {
@@ -346,6 +364,134 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
 
     override fun commonStep5RequestData(refresh: Boolean) {
 
+    }
+
+    /*--------------------------------------------------------------------------------------*/
+
+    override fun isPermissionGranted(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    override fun isPermissionsGranted(permissions: Array<String>): Boolean {
+        permissions.forEach {
+            if (!isPermissionGranted(it)) {
+                return false
+            }
+        }
+        return true
+    }
+
+    override fun isPermissionShouldShowRational(permission: String): Boolean {
+        return ActivityCompat.shouldShowRequestPermissionRationale(this, permission)
+    }
+
+    override fun isPermissionNotRequest(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            permission
+        ) == PackageManager.PERMISSION_DENIED
+    }
+
+    override fun isPermissionDenied(permission: String): Boolean {
+        return !isPermissionShouldShowRational(permission) && ContextCompat.checkSelfPermission(
+            this,
+            permission
+        ) == PackageManager.PERMISSION_DENIED
+    }
+
+    override fun showPermissionRationale(
+        permission: String,
+        listener: (positive: Boolean) -> Unit
+    ) {
+        BaseModuleLog.dPermission("显示权限提示弹窗:$permission")
+        showDialogTips("权限提示", "我为什么需要这个权限", negativeListener = {
+            BaseModuleLog.dPermission("显示权限理由后,依然选择拒绝")
+            listener(false)
+        }, positiveListener = {
+            BaseModuleLog.dPermission("显示权限理由后,点了同意")
+            listener(true)
+        })
+    }
+
+    override fun addPermissionsListener(listener: (Map<String, @JvmSuppressWildcards Boolean>) -> Unit) {
+        permissionsListeners.add(listener)
+    }
+
+    override fun onPermissionsResult(result: Map<String, @JvmSuppressWildcards Boolean>) {
+        permissionsListeners.forEach {
+            it.invoke(result)
+        }
+    }
+
+    override fun openAppDetailsSettings() {
+        BaseModuleLog.dPermission("跳转系统设置界面")
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", packageName, null)
+        intent.setData(uri)
+        startActivity(intent)
+    }
+
+//    override fun checkAndRequestPermission(permission: String) {
+//
+//    }
+//
+//    override fun checkAndRequestPermissions(permissions: Array<String>) {
+//
+//    }
+
+    override fun handlePermission(
+        permission: String,
+        callback: (granted: Boolean, denied: Boolean) -> Unit
+    ) {
+        if (isPermissionGranted(permission)) {
+            BaseModuleLog.dPermission("权限通过:$permission")
+            callback(true, false)
+        } else if (isPermissionShouldShowRational(permission)) {
+            BaseModuleLog.dPermission("权限未通过,但没有不再提示")
+            callback(false, false)
+        } else if (isPermissionNotRequest(permission)) {
+            BaseModuleLog.dPermission("权限未请求过,发起请求")
+            var listener: ((Map<String, @JvmSuppressWildcards Boolean>) -> Unit)? = null
+            listener = {
+                BaseModuleLog.dPermission("添加权限监听结果回调")
+                if (it.keys.contains(permission)) {
+                    val result = it[permission] ?: false
+                    if (result) {
+                        BaseModuleLog.dPermission("发起请求后,权限通过:$permission")
+                        callback(true, false)
+                    } else {
+                        //用户拒绝但未勾选“不再询问”，可以再次请求
+                        if (isPermissionShouldShowRational(permission)) {
+                            BaseModuleLog.dPermission("发起请求后,权限未通过,但没有不再提示:$permission")
+//                            showPermissionRationale(permission)
+                            callback(false, false)
+                        } else {
+                            BaseModuleLog.dPermission("发起请求后,权限未通过,且不再提示:$permission")
+//                            openAppDetailsSettings()
+                            callback(false, true)
+                        }
+                    }
+                }
+                permissionsListeners.remove(listener)
+            }
+            addPermissionsListener(listener)
+            requestPermission(permission)
+        } else if (isPermissionDenied(permission)) {
+            BaseModuleLog.dPermission("权限已拒绝,且不在提示:$permission")
+            callback(false, true)
+        }
+    }
+
+    override fun requestPermission(permission: String) {
+        BaseModuleLog.dPermission("启动权限请求:$permission")
+        requestPermissionLauncher.launch(arrayOf(permission))
+    }
+
+    override fun requestPermissions(permission: Array<String>) {
+        requestPermissionLauncher.launch(permission)
     }
 
     /*---------------------------------------------------------------------------------------*/
