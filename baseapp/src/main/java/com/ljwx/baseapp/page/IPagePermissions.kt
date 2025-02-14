@@ -23,7 +23,10 @@ interface IPagePermissions {
 //
 //    fun checkAndRequestPermissions(permissions: Array<String>)
 
-    fun addPermissionsListener(listener: (Map<String, @JvmSuppressWildcards Boolean>) -> Unit)
+    fun addPermissionsListener(
+        permissions: Array<String>,
+        listener: (Map<String, @JvmSuppressWildcards Boolean>) -> Unit
+    )
 
     fun onPermissionsResult(result: Map<String, @JvmSuppressWildcards Boolean>)
 

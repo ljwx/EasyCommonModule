@@ -54,6 +54,10 @@ object FeatureTest {
                 activity.openAppDetailsSettings()
             }
         }
+        val second = Manifest.permission.RECORD_AUDIO
+        activity.handlePermission(second) { granted, denied ->
+            activity.showToast("录音权限:$granted")
+        }
     }
 
 }

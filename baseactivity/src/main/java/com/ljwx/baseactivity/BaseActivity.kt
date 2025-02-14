@@ -13,7 +13,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.LayoutRes
 import androidx.appcompat.widget.Toolbar
@@ -25,7 +24,6 @@ import com.ljwx.baseactivity.statusbar.BaseStatusBar
 import com.ljwx.baseapp.R
 import com.ljwx.baseapp.constant.BaseConstBundleKey
 import com.ljwx.baseapp.constant.BaseLogTag
-import com.ljwx.baseapp.extensions.showToast
 import com.ljwx.baseapp.keyboard.KeyboardHeightProvider
 import com.ljwx.baseapp.page.IPageActivity
 import com.ljwx.baseapp.page.IPageDialogTips
@@ -51,11 +49,13 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
     protected val className = this.javaClass.simpleName
     open val TAG = className + BaseLogTag.ACTIVITY
 
+    private var isPermissionRequestInProgress = false
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
             onPermissionsResult(result)
         }
-    private val permissionsListeners by lazy { ArrayList<(result: Map<String, @JvmSuppressWildcards Boolean>) -> Unit>() }
+    private val permissionsListenerMap =
+        LinkedHashMap<Array<String>, (result: Map<String, @JvmSuppressWildcards Boolean>) -> Unit>()
 
     /**
      * 键盘
@@ -416,13 +416,20 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
         })
     }
 
-    override fun addPermissionsListener(listener: (Map<String, @JvmSuppressWildcards Boolean>) -> Unit) {
-        permissionsListeners.add(listener)
+    override fun addPermissionsListener(
+        permissions: Array<String>,
+        listener: (Map<String, @JvmSuppressWildcards Boolean>) -> Unit
+    ) {
+        permissionsListenerMap[permissions] = listener
     }
 
     override fun onPermissionsResult(result: Map<String, @JvmSuppressWildcards Boolean>) {
-        permissionsListeners.forEach {
-            it.invoke(result)
+        val iterator = permissionsListenerMap.iterator()
+        if (iterator.hasNext()) {
+            isPermissionRequestInProgress = false
+            val entry = iterator.next()
+            iterator.remove()
+            entry.value.invoke(result)
         }
     }
 
@@ -474,10 +481,10 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
                             callback(false, true)
                         }
                     }
+                    autoRequestPermissionsPool()
                 }
-                permissionsListeners.remove(listener)
             }
-            addPermissionsListener(listener)
+            addPermissionsListener(arrayOf(permission), listener)
             requestPermission(permission)
         } else if (isPermissionDenied(permission)) {
             BaseModuleLog.dPermission("权限已拒绝,且不在提示:$permission")
@@ -485,13 +492,30 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
         }
     }
 
-    override fun requestPermission(permission: String) {
-        BaseModuleLog.dPermission("启动权限请求:$permission")
-        requestPermissionLauncher.launch(arrayOf(permission))
+    private fun autoRequestPermissionsPool() {
+        permissionsListenerMap.iterator().let {
+            if (it.hasNext()) {
+                BaseModuleLog.dPermission("权限池不为空,继续自动请求")
+                launchPermission(it.next().key)
+            }
+        }
+    }
+
+    override fun requestPermission(permission: String,) {
+        val perm = arrayOf(permission)
+        launchPermission(perm)
     }
 
     override fun requestPermissions(permission: Array<String>) {
-        requestPermissionLauncher.launch(permission)
+        launchPermission(permission)
+    }
+
+    private fun launchPermission(permission: Array<String>) {
+        if (!isPermissionRequestInProgress) {
+            BaseModuleLog.dPermission("启动权限请求:" + permission.contentToString())
+            requestPermissionLauncher.launch(permission)
+            isPermissionRequestInProgress = true
+        }
     }
 
     /*---------------------------------------------------------------------------------------*/
