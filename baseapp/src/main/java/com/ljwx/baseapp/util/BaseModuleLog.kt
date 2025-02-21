@@ -42,47 +42,47 @@ object BaseModuleLog {
     }
 
     fun dActivity(content: String, className: String? = null) {
-        Log.d(activityRun, content + (if (className.isNullOrEmpty()) "" else " $className"))
+        Log.d(activityRun, content + (if (className.isNullOrEmpty()) "" else "-$className"))
     }
 
     fun dActivityStart(content: String, className: String? = null) {
-        Log.d(activityStart, content + (if (className.isNullOrEmpty()) "" else " $className"))
+        Log.d(activityStart, content + (if (className.isNullOrEmpty()) "" else "-$className"))
     }
 
     fun dToolbar(content: String, className: String? = null) {
-        Log.d(toolbar, content + (if (className.isNullOrEmpty()) "" else " $className"))
+        Log.d(toolbar, content + (if (className.isNullOrEmpty()) "" else "-$className"))
     }
 
     fun dFragment(content: String, className: String? = null) {
-        Log.d(fragmentRun, content + (if (className.isNullOrEmpty()) "" else " $className"))
+        Log.d(fragmentRun, content + (if (className.isNullOrEmpty()) "" else "-$className"))
     }
 
     fun dKeyboard(content: String, className: String? = null) {
-        Log.d(keyboardMonitor, content + (if (className.isNullOrEmpty()) "" else " $className"))
+        Log.d(keyboardMonitor, content + (if (className.isNullOrEmpty()) "" else "-$className"))
     }
 
     fun dDialog(content: String, className: String? = null) {
-        Log.d(dialog, content + (if (className.isNullOrEmpty()) "" else " $className"))
+        Log.d(dialog, content + (if (className.isNullOrEmpty()) "" else "-$className"))
     }
 
     fun dEvent(content: String, className: String? = null) {
-        Log.d(event, content + (if (className.isNullOrEmpty()) "" else " $className"))
+        Log.d(event, content + (if (className.isNullOrEmpty()) "" else "-$className"))
     }
 
     fun dStateRefresh(content: String, className: String? = null) {
-        Log.d(stateRefresh, content + (if (className.isNullOrEmpty()) "" else " $className"))
+        Log.d(stateRefresh, content + (if (className.isNullOrEmpty()) "" else "-$className"))
     }
 
     fun dViewmodel(content: String, className: String? = null) {
-        Log.d(viewmodel, content + (if (className.isNullOrEmpty()) "" else " $className"))
+        Log.d(viewmodel, content + (if (className.isNullOrEmpty()) "" else "-$className"))
     }
 
     fun dRepository(content: String, className: String? = null) {
-        Log.d(repository, content + (if (className.isNullOrEmpty()) "" else " $className"))
+        Log.d(repository, content + (if (className.isNullOrEmpty()) "" else "-$className"))
     }
 
     fun dPermission(content: String, className: String? = null) {
-        Log.d(permission, content + (if (className.isNullOrEmpty()) "" else " $className"))
+        Log.d(permission, content + (if (className.isNullOrEmpty()) "" else "-$className"))
     }
 
 }

@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import com.ljwx.baseapp.util.BaseModuleLog
 
 open class BaseBindingActivity<Binding : ViewDataBinding>(@LayoutRes private val layoutResID: Int) :
     BaseStateRefreshActivity() {
@@ -13,8 +12,10 @@ open class BaseBindingActivity<Binding : ViewDataBinding>(@LayoutRes private val
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onSetContentView() {
         mBinding = DataBindingUtil.setContentView(this, layoutResID)
-        onViewCreated()
     }
 
     override fun onDestroy() {

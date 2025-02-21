@@ -6,23 +6,28 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Point
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.view.Display
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.ljwx.baseapp.constant.BaseConstBundleKey
 import com.ljwx.baseapp.constant.BaseLogTag
-import com.ljwx.baseapp.keyboard.KeyboardHeightProvider
 import com.ljwx.baseapp.page.IPageLocalEvent
 import com.ljwx.baseapp.page.IPageProcessStep
 import com.ljwx.baseapp.page.IPageDialogTips
@@ -38,6 +43,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.max
 
 open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.baseapp.R.layout.baseapp_state_layout_empty) :
     BaseToolsFragment(),
@@ -57,15 +63,6 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
         }
     private val permissionsListenerMap =
         LinkedHashMap<Array<String>, (result: Map<String, @JvmSuppressWildcards Boolean>) -> Unit>()
-
-    /**
-     * 键盘
-     */
-    protected var mScreenHeight = -1//辅助计算键盘高度
-
-    protected var keyboardHighProvider: KeyboardHeightProvider? = null
-
-    private var hidePopBottom = 0
 
     /**
      * 广播事件
@@ -113,8 +110,7 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
         super.onViewCreated(view, savedInstanceState)
         BaseModuleLog.dFragment("生命周期onViewCreated", className)
         if (enableKeyboardHeightListener()) {
-            createKeyboardHeightProvider()
-            keyboardHeightRootView()?.post { keyboardHighProvider?.start() }
+            setKeyboardHeightListener(view, null)
         }
     }
 
@@ -124,9 +120,6 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
         if (!isLazyInitialized && !isHidden) {
             onLazyInit()
             isLazyInitialized = true
-        }
-        if (enableKeyboardHeightListener()) {
-            setKeyboardHeightListener()
         }
     }
 
@@ -182,9 +175,7 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
         negativeListener: View.OnClickListener?,
         positiveListener: View.OnClickListener?
     ): Dialog? {
-        if (!isAdded) {
-            return null
-        }
+        if (!isAdded) return null
 //        if (tag.notNullOrBlank()) {
 //            val cache = childFragmentManager.findFragmentByTag(tag)
 //            if (cache != null && cache is BaseDialogFragment) {
@@ -315,6 +306,7 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
     /*--------------------------------------------------------------------------------------*/
 
     override fun isPermissionGranted(permission: String): Boolean {
+        if (!isAdded) return false
         return ContextCompat.checkSelfPermission(
             requireContext(),
             permission
@@ -331,10 +323,12 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
     }
 
     override fun isPermissionShouldShowRational(permission: String): Boolean {
+        if (!isAdded) return false
         return ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), permission)
     }
 
     override fun isPermissionNotRequest(permission: String): Boolean {
+        if (!isAdded) return false
         return ContextCompat.checkSelfPermission(
             requireContext(),
             permission
@@ -342,6 +336,7 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
     }
 
     override fun isPermissionDenied(permission: String): Boolean {
+        if (!isAdded) return false
         return !isPermissionShouldShowRational(permission) && ContextCompat.checkSelfPermission(
             requireContext(),
             permission
@@ -380,6 +375,7 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
     }
 
     override fun openAppDetailsSettings() {
+        if (!isAdded) return
         BaseModuleLog.dPermission("跳转系统设置界面")
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
         val uri = Uri.fromParts("package", requireContext().packageName, null)
@@ -469,43 +465,64 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
 
     override fun enableKeyboardHeightListener(): Boolean = false
 
-    override fun createKeyboardHeightProvider() {
-        keyboardHighProvider = keyboardHighProvider ?: KeyboardHeightProvider(requireActivity())
-    }
-
-    override fun keyboardHeightRootView(): View? = view
-
-    override fun setKeyboardHeightListener() {
-        keyboardHighProvider?.setKeyboardHeightListener { height, orientation ->
-            BaseModuleLog.dKeyboard("keyboardHeightListener:$height", className)
-            var keyBoardHeight = 0
-            if (mScreenHeight <= 0) {
-                hidePopBottom = height
-            } else {
-                if (keyBoardHeight <= 0 && height > hidePopBottom && height - hidePopBottom > mScreenHeight / 4) {
-                    keyBoardHeight = height - hidePopBottom
-                }
-                if (keyBoardHeight > mScreenHeight * 3 / 5) {
-                    keyBoardHeight = height - hidePopBottom
-                }
-            }
-            if (mScreenHeight <= 0) {
-                mScreenHeight = keyboardHeightRootView()?.getHeight() ?: 2000
-            }
-            if (isKeyboardShow(height, hidePopBottom)) { //软键盘弹出
-                onKeyboardHeightChange(true, keyBoardHeight)
-            } else {
-                onKeyboardHeightChange(false, 0)
-            }
+    override fun setKeyboardHeightListener(
+        rootView: View,
+        callback: ((height: Int, visible: Boolean) -> Unit)?
+    ) {
+        ViewCompat.setOnApplyWindowInsetsListener(rootView) { view, insets ->
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val height = imeInsets.bottom
+            val visible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            onKeyboardHeightChanged(height, visible)
+            callback?.invoke(height, visible)
+            insets
         }
     }
 
-    override fun isKeyboardShow(height: Int, buffHeight: Int): Boolean {
-        return height - buffHeight > mScreenHeight / 4
+    override fun getScreenRealHeight(): Int {
+        if (activity == null) return 0
+        val screenRealHeight = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Android 12+ 使用 WindowMetrics
+            val windowMetrics = activity?.windowManager?.currentWindowMetrics
+            val insets =
+                windowMetrics?.windowInsets?.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            (windowMetrics?.bounds?.height() ?: 0) - (insets?.top ?: 0) - (insets?.bottom ?: 0)
+        } else {
+            // 旧版本兼容（已过时但可用）
+            val size = Point()
+            activity?.windowManager?.defaultDisplay?.getRealSize(size)
+            size.y
+        }
+        BaseModuleLog.dKeyboard("获取到的屏幕真实高度:$screenRealHeight", className)
+        return screenRealHeight
     }
 
-    override fun onKeyboardHeightChange(show: Boolean, height: Int) {
-        BaseModuleLog.dKeyboard("触发键盘高度变化:$height", className)
+    override fun getNavigationBarHeight(rootView: View): Int {
+        var navBarHeight = -1
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            //在 Android 11（API 30）及以上 版本中，通过 WindowInsets.Type.navigationBars() 获取导航栏高度。
+            val insets = rootView.rootWindowInsets
+            if (insets != null) {
+                navBarHeight = insets.getInsets(WindowInsets.Type.navigationBars()).bottom
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Android 6.0 到 Android 10，使用过时 API（需忽略警告）
+            val insets = rootView.rootWindowInsets;
+            if (insets != null) {
+                navBarHeight = insets.stableInsetBottom;
+            }
+        }
+        if (navBarHeight != -1) {
+            //通过 AndroidX 的 WindowInsetsCompat 库，可以统一处理所有 Android 版本，无需手动判断 API 等级。
+            val insets = ViewCompat.getRootWindowInsets(rootView)
+            navBarHeight = insets?.getInsets(WindowInsetsCompat.Type.navigationBars())?.bottom ?: 0
+        }
+        BaseModuleLog.dKeyboard("获取的导航栏高度:$navBarHeight")
+        return max(navBarHeight, 0)
+    }
+
+    override fun onKeyboardHeightChanged(height: Int, visible: Boolean) {
+        BaseModuleLog.dKeyboard("触发键盘高度变化:$height-是否显示:$visible", className)
     }
 
     /*----------------------------------------------------------------------------------------*/
@@ -521,7 +538,6 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
     override fun onPause() {
         super.onPause()
         BaseModuleLog.dFragment("生命周期onPause", className)
-        keyboardHighProvider?.setKeyboardHeightListener(null)
     }
 
     override fun onStart() {
@@ -562,7 +578,6 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
         broadcastReceivers?.keys?.toList()?.forEach {
             unregisterLocalEvent(it)
         }
-        keyboardHighProvider?.close()
     }
 
 }

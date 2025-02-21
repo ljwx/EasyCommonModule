@@ -6,14 +6,15 @@ interface IPageKeyboardHeight {
 
     fun enableKeyboardHeightListener(): Boolean
 
-    fun createKeyboardHeightProvider()
+    fun setKeyboardHeightListener(
+        rootView: View,
+        callback: ((height: Int, visible: Boolean) -> Unit)?
+    )
 
-    fun keyboardHeightRootView(): View?
+    fun getScreenRealHeight(): Int
 
-    fun setKeyboardHeightListener()
+    fun getNavigationBarHeight(rootView: View): Int
 
-    fun isKeyboardShow(height: Int, buffHeight: Int): Boolean
-
-    fun onKeyboardHeightChange(show: Boolean, height: Int)
+    fun onKeyboardHeightChanged(height: Int, visible: Boolean)
 
 }

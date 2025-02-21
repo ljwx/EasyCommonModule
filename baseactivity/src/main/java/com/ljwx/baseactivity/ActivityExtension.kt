@@ -17,7 +17,7 @@ import com.ljwx.baseapp.shake.registerShake
 /**
  * 获取Activity根布局
  */
-val AppCompatActivity.rootLayout: View?
+inline val FragmentActivity.rootLayout: View?
     get() {
         val container = findViewById<ViewGroup>(android.R.id.content)
         return if (container.childCount > 0) container.getChildAt(0) else container

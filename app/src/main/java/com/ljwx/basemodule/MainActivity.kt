@@ -95,4 +95,6 @@ class MainActivity :
         }
     }
 
+    override fun enableKeyboardHeightListener() = true
+
 }

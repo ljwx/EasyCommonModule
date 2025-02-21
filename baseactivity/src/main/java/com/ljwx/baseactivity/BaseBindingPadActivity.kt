@@ -1,13 +1,9 @@
 package com.ljwx.baseactivity
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import com.ljwx.baseapp.extensions.getStringRes
 import com.ljwx.baseapp.util.OtherUtils
 
 abstract class BaseBindingPadActivity<Binding : ViewDataBinding, BindingPad : ViewDataBinding>(
@@ -25,12 +21,14 @@ abstract class BaseBindingPadActivity<Binding : ViewDataBinding, BindingPad : Vi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onSetContentView() {
         if (isPad) {
             mBindingPad = DataBindingUtil.setContentView(this, getLayoutRes())
         } else {
             mBinding = DataBindingUtil.setContentView(this, getLayoutRes())
         }
-        onViewCreated()
     }
 
     override fun getLayoutRes(): Int {

@@ -1,6 +1,6 @@
 package com.ljwx.baseactivity
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -9,22 +9,28 @@ import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.Point
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.view.WindowInsets
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.LayoutRes
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.ljwx.baseactivity.statusbar.BaseStatusBar
 import com.ljwx.baseapp.R
 import com.ljwx.baseapp.constant.BaseConstBundleKey
 import com.ljwx.baseapp.constant.BaseLogTag
-import com.ljwx.baseapp.keyboard.KeyboardHeightProvider
 import com.ljwx.baseapp.page.IPageActivity
 import com.ljwx.baseapp.page.IPageDialogTips
 import com.ljwx.baseapp.page.IPageKeyboardHeight
@@ -40,6 +46,8 @@ import com.ljwx.baseapp.util.LocalEventUtils
 import com.ljwx.baseapp.view.IViewStatusBar
 import com.ljwx.basedialog.common.BaseDialogBuilder
 import com.ljwx.router.RouterPostcard
+import kotlin.math.max
+
 
 abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.baseapp.R.layout.baseapp_state_layout_empty) :
     BaseToolsActivity(), IPageStatusBar, IPageToolbar, IPageLocalEvent,
@@ -60,11 +68,6 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
     /**
      * 键盘
      */
-    protected var mScreenHeight = -1//辅助计算键盘高度
-
-    protected var keyboardHighProvider: KeyboardHeightProvider? = null
-
-    private var hidePopBottom = 0
 
     private val mStatusBar by lazy { BaseStatusBar(this) }
 
@@ -83,25 +86,30 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         BaseModuleLog.dActivity("生命周期onCreate", className)
+        onBeforeSetContentView()
+        onSetContentView()
+        onViewCreated()
         setStatusBarLight(true)
         getScreenOrientation()?.let {
             requestedOrientation = it
             BaseModuleLog.dActivity("设置屏幕方向:$it", className)
         }
-        if (enableKeyboardHeightListener()) {
-            createKeyboardHeightProvider()
-            keyboardHeightRootView()?.post { keyboardHighProvider?.start() }
-            BaseModuleLog.dKeyboard("启用键盘高度监听", className)
-        }
     }
 
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        BaseModuleLog.dActivity("生命周期onWindowFocusChanged,hasFocus:$hasFocus")
+    open fun onBeforeSetContentView() {
+
+    }
+
+    open fun onSetContentView() {
+        setContentView(getLayoutRes())
     }
 
     override fun onViewCreated() {
         initToolbar(R.id.base_app_toolbar)
+        if (enableKeyboardHeightListener()) {
+            BaseModuleLog.dKeyboard("启用键盘高度监听", className)
+            rootLayout?.let { setKeyboardHeightListener(it, null) }
+        }
     }
 
     open fun getLayoutRes(): Int {
@@ -177,6 +185,11 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
         return toolbar
     }
 
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        BaseModuleLog.dActivity("生命周期onWindowFocusChanged,hasFocus:$hasFocus")
+    }
+
     override fun setToolbarTitle(title: CharSequence) {
         supportActionBar?.title = title
         BaseModuleLog.dToolbar("设置toolbar的标题", className)
@@ -197,9 +210,6 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
         super.onResume()
         BaseModuleLog.dActivity("生命周期onResume", className)
         mStateSaved = false
-        if (enableKeyboardHeightListener()) {
-            setKeyboardHeightListener()
-        }
     }
 
     override fun onStop() {
@@ -501,7 +511,7 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
         }
     }
 
-    override fun requestPermission(permission: String,) {
+    override fun requestPermission(permission: String) {
         val perm = arrayOf(permission)
         launchPermission(perm)
     }
@@ -523,49 +533,70 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
 
     override fun enableKeyboardHeightListener(): Boolean = false
 
-    override fun createKeyboardHeightProvider() {
-        keyboardHighProvider = keyboardHighProvider ?: KeyboardHeightProvider(this)
-    }
-
-    override fun keyboardHeightRootView(): View? = rootLayout
-
-    override fun setKeyboardHeightListener() {
-        keyboardHighProvider?.setKeyboardHeightListener { height, orientation ->
-            BaseModuleLog.dKeyboard("keyboardHeightListener:$height", className)
-            var keyBoardHeight = 0
-            if (mScreenHeight <= 0) {
-                hidePopBottom = height
-            } else {
-                if (keyBoardHeight <= 0 && height > hidePopBottom && height - hidePopBottom > mScreenHeight / 4) {
-                    keyBoardHeight = height - hidePopBottom
-                }
-                if (keyBoardHeight > mScreenHeight * 3 / 5) {
-                    keyBoardHeight = height - hidePopBottom
-                }
-            }
-            if (mScreenHeight <= 0) {
-                mScreenHeight = keyboardHeightRootView()?.getHeight() ?: 2000
-            }
-            if (isKeyboardShow(height, hidePopBottom)) { //软键盘弹出
-                onKeyboardHeightChange(true, keyBoardHeight)
-            } else {
-                onKeyboardHeightChange(false, 0)
-            }
+    override fun setKeyboardHeightListener(
+        rootView: View,
+        callback: ((height: Int, visible: Boolean) -> Unit)?
+    ) {
+        ViewCompat.setOnApplyWindowInsetsListener(rootView) { view, insets ->
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val height = imeInsets.bottom
+            val visible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            onKeyboardHeightChanged(height, visible)
+            callback?.invoke(height, visible)
+            insets
         }
     }
 
-    override fun isKeyboardShow(height: Int, buffHeight: Int): Boolean {
-        return height - buffHeight > mScreenHeight / 4
+    override fun getScreenRealHeight(): Int {
+        val screenRealHeight = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Android 12+ 使用 WindowMetrics
+            val windowMetrics = windowManager?.currentWindowMetrics
+            val insets =
+                windowMetrics?.windowInsets?.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            (windowMetrics?.bounds?.height() ?: 0) - (insets?.top ?: 0) - (insets?.bottom ?: 0)
+        } else {
+            // 旧版本兼容（已过时但可用）
+            val size = Point()
+            windowManager.defaultDisplay.getRealSize(size)
+            size.y
+        }
+        BaseModuleLog.dKeyboard("获取到的屏幕真实高度:$screenRealHeight", className)
+        return screenRealHeight
     }
 
-    override fun onKeyboardHeightChange(show: Boolean, height: Int) {
-        BaseModuleLog.dKeyboard("触发键盘高度变化:$height", className)
+    override fun getNavigationBarHeight(rootView: View): Int {
+        var navBarHeight = -1
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            //在 Android 11（API 30）及以上 版本中，通过 WindowInsets.Type.navigationBars() 获取导航栏高度。
+            val insets = rootView.rootWindowInsets
+            if (insets != null) {
+                navBarHeight = insets.getInsets(WindowInsets.Type.navigationBars()).bottom
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Android 6.0 到 Android 10，使用过时 API（需忽略警告）
+            val insets = rootView.rootWindowInsets;
+            if (insets != null) {
+                navBarHeight = insets.stableInsetBottom;
+            }
+        }
+        if (navBarHeight != -1) {
+            //通过 AndroidX 的 WindowInsetsCompat 库，可以统一处理所有 Android 版本，无需手动判断 API 等级。
+            val insets = ViewCompat.getRootWindowInsets(rootView)
+            navBarHeight = insets?.getInsets(WindowInsetsCompat.Type.navigationBars())?.bottom ?: 0
+        }
+        BaseModuleLog.dKeyboard("获取的导航栏高度:$navBarHeight", className)
+        return max(navBarHeight, 0)
     }
+
+    override fun onKeyboardHeightChanged(height: Int, visible: Boolean) {
+        BaseModuleLog.dKeyboard("触发键盘高度变化:$height-是否显示:$visible", className)
+    }
+
+    /*---------------------------------------------------------------------------------------*/
 
     override fun onPause() {
         super.onPause()
         BaseModuleLog.dActivity("生命周期onPause", className)
-        keyboardHighProvider?.setKeyboardHeightListener(null)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -594,7 +625,6 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
         broadcastReceivers?.keys?.toList()?.forEach {
             unregisterLocalEvent(it)
         }
-        keyboardHighProvider?.close()
     }
 
 }
