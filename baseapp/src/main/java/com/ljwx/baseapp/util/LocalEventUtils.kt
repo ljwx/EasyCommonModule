@@ -8,22 +8,37 @@ import com.ljwx.baseapp.constant.BaseLogTag
 
 object LocalEventUtils {
 
-    fun sendAction(action: String?, type: Long?) {
-        if (action == null) {
-            return
-        }
-        BaseModuleLog.d(BaseLogTag.LOCAL_EVENT, "发送事件广播:$action")
+//    fun sendAction(action: String?, type: Long?) {
+//        if (action == null) {
+//            return
+//        }
+//        BaseModuleLog.dEvent("发送事件广播:$action")
+//        Utils.getApp()?.let {
+//            val intent = Intent(action)
+//            type?.let {
+//                intent.putExtra(BaseConstBundleKey.LOCAL_EVENT_COMMON_TYPE, type)
+//            }
+//            LocalBroadcastManager.getInstance(it).sendBroadcast(intent)
+//        }
+//    }
+
+    fun sendAction(action: String, simpleData: String?) {
+        BaseModuleLog.dEvent("发送事件广播:$action")
         Utils.getApp()?.let {
             val intent = Intent(action)
-            type?.let {
-                intent.putExtra(BaseConstBundleKey.LOCAL_EVENT_COMMON_TYPE, type)
+            simpleData?.let {
+                intent.putExtra(BaseConstBundleKey.LOCAL_EVENT_COMMON_SIMPLE_DATA, it)
             }
             LocalBroadcastManager.getInstance(it).sendBroadcast(intent)
         }
     }
 
-    fun sendAction() {
-
+    fun sendAction(action: String, dataIntent: Intent) {
+        dataIntent.action = action
+        BaseModuleLog.dEvent("发送事件广播:$action")
+        Utils.getApp()?.let {
+            LocalBroadcastManager.getInstance(it).sendBroadcast(dataIntent)
+        }
     }
 
 }

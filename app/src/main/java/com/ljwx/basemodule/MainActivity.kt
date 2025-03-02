@@ -80,10 +80,10 @@ class MainActivity :
             startForegroundService(Intent(this, TestForegroundService::class.java))
         }
 
-        registerLocalEvent("refresh") { action, type, value, intent ->
+        registerLocalEvent("refresh") {
             Log.d("事件", "接收到刷新事件")
         }
-        sendLocalEvent("refresh")
+        sendLocalEvent("refresh", null)
     }
 
     override fun getScreenOrientation() = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED

@@ -208,27 +208,20 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
         }
     }
 
-    /**
-     * 事件广播使用
-     */
-    override fun registerLocalEvent(
-        action: String?,
-        observer: (action: String, type: Long?, value: String?, intent: Intent) -> Unit
+    /*--------------------------------------------------------------------------------------------*/
+
+    override fun registerLocalEventIntent(
+        action: String,
+        observer: (intent: Intent) -> Unit
     ) {
-        if (action == null) {
-            return
-        }
+        if (!isAdded) return
         val intentFilter = IntentFilter(action)
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 intent.action?.let {
                     BaseModuleLog.dEvent("接收到事件广播:$it", className)
                     if (intentFilter.matchAction(it)) {
-                        val type =
-                            intent.getLongExtra(BaseConstBundleKey.LOCAL_EVENT_COMMON_TYPE, -1)
-                        val value =
-                            intent.getStringExtra(BaseConstBundleKey.LOCAL_EVENT_COMMON_VALUE)
-                        observer(action, type, value, intent)
+                        observer(intent)
                     }
                 }
             }
@@ -236,13 +229,76 @@ open class BaseFragment(@LayoutRes private val layoutResID: Int = com.ljwx.basea
         broadcastReceivers = broadcastReceivers ?: HashMap()
         broadcastReceivers?.put(action, receiver)
         BaseModuleLog.dEvent("注册事件广播:$action", className)
-        context?.let {
-            LocalBroadcastManager.getInstance(it).registerReceiver(receiver, intentFilter)
-        }
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(receiver, intentFilter)
     }
 
-    override fun sendLocalEvent(action: String?, type: Long?, value: String?) {
-        LocalEventUtils.sendAction(action, type)
+    override fun registerLocalEvent(
+        action: String,
+        observer: (simpleData: String?) -> Unit
+    ) {
+        if (!isAdded) return
+        val intentFilter = IntentFilter(action)
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                intent.action?.let {
+                    BaseModuleLog.dEvent("接收到事件广播:$it", className)
+                    if (intentFilter.matchAction(it)) {
+                        observer(
+                            intent.getStringExtra(BaseConstBundleKey.LOCAL_EVENT_COMMON_SIMPLE_DATA)
+                        )
+                    }
+                }
+            }
+        }
+        broadcastReceivers = broadcastReceivers ?: HashMap()
+        broadcastReceivers?.put(action, receiver)
+        BaseModuleLog.dEvent("注册事件广播:$action", className)
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(receiver, intentFilter)
+    }
+
+    /**
+     * 事件广播使用
+     */
+//    override fun registerLocalEvent(
+//        action: String?,
+//        observer: (action: String, type: Long?, value: String?, intent: Intent) -> Unit
+//    ) {
+//        if (action == null) {
+//            return
+//        }
+//        val intentFilter = IntentFilter(action)
+//        val receiver = object : BroadcastReceiver() {
+//            override fun onReceive(context: Context, intent: Intent) {
+//                intent.action?.let {
+//                    BaseModuleLog.dEvent("接收到事件广播:$it", className)
+//                    if (intentFilter.matchAction(it)) {
+//                        val type =
+//                            intent.getLongExtra(BaseConstBundleKey.LOCAL_EVENT_COMMON_TYPE, -1)
+//                        val value =
+//                            intent.getStringExtra(BaseConstBundleKey.LOCAL_EVENT_COMMON_VALUE)
+//                        observer(action, type, value, intent)
+//                    }
+//                }
+//            }
+//        }
+//        broadcastReceivers = broadcastReceivers ?: HashMap()
+//        broadcastReceivers?.put(action, receiver)
+//        BaseModuleLog.dEvent("注册事件广播:$action", className)
+//        context?.let {
+//            LocalBroadcastManager.getInstance(it).registerReceiver(receiver, intentFilter)
+//        }
+//    }
+//
+//    override fun sendLocalEvent(action: String?, type: Long?, value: String?) {
+//        LocalEventUtils.sendAction(action, type)
+//    }
+
+    override fun sendLocalEvent(action: String, simpleData: String?) {
+        LocalEventUtils.sendAction(action, simpleData)
+    }
+
+    override fun sendLocalEvent(action: String, dataIntent: Intent) {
+        LocalEventUtils.sendAction(action, dataIntent)
     }
 
     override fun unregisterLocalEvent(action: String?) {

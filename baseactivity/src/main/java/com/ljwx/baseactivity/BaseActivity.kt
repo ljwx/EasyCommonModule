@@ -88,7 +88,7 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
         BaseModuleLog.dActivity("生命周期onCreate", className)
         onBeforeSetContentView()
         onSetContentView()
-        onViewCreated()
+        onViewCreated(window.decorView)
         setStatusBarLight(true)
         getScreenOrientation()?.let {
             requestedOrientation = it
@@ -104,7 +104,7 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
         setContentView(getLayoutRes())
     }
 
-    override fun onViewCreated() {
+    override fun onViewCreated(rootView: View) {
         initToolbar(R.id.base_app_toolbar)
         if (enableKeyboardHeightListener()) {
             BaseModuleLog.dKeyboard("启用键盘高度监听", className)
@@ -285,27 +285,19 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
         }
     }
 
-    /**
-     * 事件广播使用
-     */
-    override fun registerLocalEvent(
-        action: String?,
-        observer: (action: String, type: Long?, value: String?, intent: Intent) -> Unit
+    /*--------------------------------------------------------------------------------------------*/
+
+    override fun registerLocalEventIntent(
+        action: String,
+        observer: (intent: Intent) -> Unit
     ) {
-        if (action == null) {
-            return
-        }
         val intentFilter = IntentFilter(action)
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 intent.action?.let {
                     BaseModuleLog.dEvent("接收到事件广播:$it", className)
                     if (intentFilter.matchAction(it)) {
-                        val type =
-                            intent.getLongExtra(BaseConstBundleKey.LOCAL_EVENT_COMMON_TYPE, -1)
-                        val value =
-                            intent.getStringExtra(BaseConstBundleKey.LOCAL_EVENT_COMMON_VALUE)
-                        observer(action, type, value, intent)
+                        observer(intent)
                     }
                 }
             }
@@ -316,9 +308,71 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
     }
 
-    override fun sendLocalEvent(action: String?, type: Long?, value: String?) {
-        LocalEventUtils.sendAction(action, type)
+    override fun registerLocalEvent(
+        action: String,
+        observer: (simpleData: String?) -> Unit
+    ) {
+        val intentFilter = IntentFilter(action)
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                intent.action?.let {
+                    BaseModuleLog.dEvent("接收到事件广播:$it", className)
+                    if (intentFilter.matchAction(it)) {
+                        observer(
+                            intent.getStringExtra(BaseConstBundleKey.LOCAL_EVENT_COMMON_SIMPLE_DATA)
+                        )
+                    }
+                }
+            }
+        }
+        broadcastReceivers = broadcastReceivers ?: HashMap()
+        broadcastReceivers?.put(action, receiver)
+        BaseModuleLog.dEvent("注册事件广播:$action", className)
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
     }
+
+    /**
+     * 事件广播使用
+     */
+//    override fun registerLocalEvent(
+//        action: String?,
+//        observer: (action: String, type: Long?, value: String?, intent: Intent) -> Unit
+//    ) {
+//        if (action == null) {
+//            return
+//        }
+//        val intentFilter = IntentFilter(action)
+//        val receiver = object : BroadcastReceiver() {
+//            override fun onReceive(context: Context, intent: Intent) {
+//                intent.action?.let {
+//                    BaseModuleLog.dEvent("接收到事件广播:$it", className)
+//                    if (intentFilter.matchAction(it)) {
+//                        val type =
+//                            intent.getLongExtra(BaseConstBundleKey.LOCAL_EVENT_COMMON_TYPE, -1)
+//                        val value =
+//                            intent.getStringExtra(BaseConstBundleKey.LOCAL_EVENT_COMMON_VALUE)
+//                        observer(action, type, value, intent)
+//                    }
+//                }
+//            }
+//        }
+//        broadcastReceivers = broadcastReceivers ?: HashMap()
+//        broadcastReceivers?.put(action, receiver)
+//        BaseModuleLog.dEvent("注册事件广播:$action", className)
+//        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
+//    }
+
+    override fun sendLocalEvent(action: String, simpleData: String?) {
+        LocalEventUtils.sendAction(action, simpleData)
+    }
+
+    override fun sendLocalEvent(action: String, dataIntent: Intent) {
+        LocalEventUtils.sendAction(action, dataIntent)
+    }
+
+//    override fun sendLocalEvent(action: String?, type: Long?, value: String?) {
+//        LocalEventUtils.sendAction(action, type)
+//    }
 
     override fun unregisterLocalEvent(action: String?) {
         action?.let {

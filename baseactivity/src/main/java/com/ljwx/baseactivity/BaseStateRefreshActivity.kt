@@ -43,8 +43,8 @@ open class BaseStateRefreshActivity(@LayoutRes layoutResID: Int = R.layout.basea
 
     }
 
-    override fun onViewCreated() {
-        super.onViewCreated()
+    override fun onViewCreated(rootView: View) {
+        super.onViewCreated(rootView)
         enableAutoInitStateLayout()
         enableAutoInitRefreshLayout()
     }

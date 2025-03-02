@@ -1,5 +1,6 @@
 package com.ljwx.baseapp.vm
 
+import android.content.Intent
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -91,8 +92,16 @@ abstract class BaseViewModel<M : BaseDataRepository<*>> : ViewModel(), IBaseView
 
     }
 
-    override fun sendLocalEvent(action: String?, type: Long?, value: String?) {
-        LocalEventUtils.sendAction(action, type)
+//    override fun sendLocalEvent(action: String?, type: Long?, value: String?) {
+//        LocalEventUtils.sendAction(action, type)
+//    }
+
+    override fun sendLocalEvent(action: String, simpleData: String?) {
+        LocalEventUtils.sendAction(action, simpleData)
+    }
+
+    override fun sendLocalEvent(action: String, dataIntent: Intent) {
+        LocalEventUtils.sendAction(action, dataIntent)
     }
 
     override fun getString(string: Int) {
