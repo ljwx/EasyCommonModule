@@ -1,6 +1,5 @@
 package com.ljwx.baseactivity
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -14,10 +13,10 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowInsets
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.LayoutRes
 import androidx.appcompat.widget.Toolbar
@@ -47,6 +46,10 @@ import com.ljwx.baseapp.view.IViewStatusBar
 import com.ljwx.basedialog.common.BaseDialogBuilder
 import com.ljwx.router.RouterPostcard
 import kotlin.math.max
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
+
+
 
 
 abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.baseapp.R.layout.baseapp_state_layout_empty) :
@@ -58,12 +61,24 @@ abstract class BaseActivity(@LayoutRes private val layoutResID: Int = com.ljwx.b
     open val TAG = className + BaseLogTag.ACTIVITY
 
     private var isPermissionRequestInProgress = false
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
+    private val requestPermissionLauncher by lazy {
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions())
+        { result ->
             onPermissionsResult(result)
         }
+    }
     private val permissionsListenerMap =
         LinkedHashMap<Array<String>, (result: Map<String, @JvmSuppressWildcards Boolean>) -> Unit>()
+
+    private val activityResultLauncher by lazy {
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult(),
+            object : ActivityResultCallback<ActivityResult?> {
+                override fun onActivityResult(result: ActivityResult?) {
+
+                }
+            })
+    }
 
     /**
      * 键盘
