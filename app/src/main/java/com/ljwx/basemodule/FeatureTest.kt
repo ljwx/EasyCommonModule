@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.ljwx.baseapp.extensions.showToast
+import com.ljwx.basemodulev2.test.BaseModuleTestActivity
 import com.ljwx.provide.speechrecognizer.HmsSpeechRecognizer
 
 object FeatureTest {
@@ -38,6 +39,10 @@ object FeatureTest {
     }
 
     fun testClick(activity: MainActivity) {
+        testModuleV2(activity)
+    }
+
+    fun testPermissions(activity: MainActivity) {
         val permission = Manifest.permission.CAMERA
         activity.handlePermission(permission) { granted, denied ->
             if (granted) {
@@ -58,6 +63,10 @@ object FeatureTest {
         activity.handlePermission(second) { granted, denied ->
             activity.showToast("录音权限:$granted")
         }
+    }
+
+    fun testModuleV2(activity: MainActivity) {
+        activity.startActivity(BaseModuleTestActivity::class.java)
     }
 
 }

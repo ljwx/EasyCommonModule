@@ -1,11 +1,14 @@
 package com.ljwx.basebase.activity
 
 import android.view.View
+import com.ljwx.basebase.navigationbar.IBaseNavigationBar
+import com.ljwx.basebase.page.usualstep.IPageUsualStep
 
-interface IBaseActivity : IBaseActivityStatusBar {
+interface IBaseActivity : IBaseActivityCreateStep, IBaseActivityScreenOrientation,
+    IBaseActivityStatusBar, IBaseActivityToolbar, IBaseStartActivity, IBaseNavigationBar ,IPageUsualStep{
 
-    fun getScreenOrientation(): Int?
+    fun getLayoutRes(): Int
 
-    fun onViewCreated(rootView: View)
+    fun getRootView(): View
 
 }

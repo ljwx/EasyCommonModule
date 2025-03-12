@@ -111,6 +111,10 @@ dependencies {
     implementation project(path: ':basepermission')
     implementation project(path: ':providespeechrecognizer')
 
+
+    implementation project(path: ':basebase')
+    implementation project(path: ':basemodulev2')
+
     implementation 'io.github.ljwx:SplitTextView:0.3.8'
 
     def arouter = "1.4.1"

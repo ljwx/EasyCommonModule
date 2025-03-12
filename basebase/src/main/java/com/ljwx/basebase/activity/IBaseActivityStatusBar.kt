@@ -4,8 +4,16 @@ import androidx.annotation.ColorInt
 
 interface IBaseActivityStatusBar {
 
-    fun setStatusBarColor(@ColorInt color: Int)
+    fun hideStatusBar()
+
+    fun setStatusBarLight()
+
+    fun setStatusBarDark()
+
+    fun setStatusBarBackgroundColor(@ColorInt color: Int)
 
     fun setStatusBarFontDark(dark: Boolean)
+
+    fun setStatusBarTransparent()
 
 }

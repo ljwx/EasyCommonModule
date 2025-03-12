@@ -1,6 +1,6 @@
-package com.ljwx.basebase.page.executestep
+package com.ljwx.basebase.page.usualstep
 
-interface IPageExecuteStep {
+interface IPageUsualStep {
 
     fun enableUsualSteps()
 

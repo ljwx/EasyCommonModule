@@ -53,7 +53,7 @@ class MainActivity :
         unregisterLocalEvent("test4")
         var test = false
         RecordAudioUtils.registerPermission(this, object :ActivityResultCallback<Boolean> {
-            override fun onActivityResult(result: Boolean?) {
+            override fun onActivityResult(result: Boolean) {
                 RecordAudioUtils.startTest(this@MainActivity)
                 test = true
             }
