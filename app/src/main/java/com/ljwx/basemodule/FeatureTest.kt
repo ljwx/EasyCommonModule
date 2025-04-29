@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.ljwx.baseapp.extensions.showToast
 import com.ljwx.basemodulev2.test.BaseModuleTestActivity
+import com.ljwx.mylibrary.GQRCodeTestActivity
 import com.ljwx.provide.speechrecognizer.HmsSpeechRecognizer
 
 object FeatureTest {
@@ -39,7 +40,8 @@ object FeatureTest {
     }
 
     fun testClick(activity: MainActivity) {
-        testModuleV2(activity)
+//        testModuleV2(activity)
+        startQrCode(activity)
     }
 
     fun testPermissions(activity: MainActivity) {
@@ -67,6 +69,10 @@ object FeatureTest {
 
     fun testModuleV2(activity: MainActivity) {
         activity.startActivity(BaseModuleTestActivity::class.java)
+    }
+
+    fun startQrCode(activity: MainActivity) {
+        activity.startActivity(GQRCodeTestActivity::class.java)
     }
 
 }

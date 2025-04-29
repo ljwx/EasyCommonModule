@@ -109,6 +109,7 @@ dependencies {
     implementation project(path: ':baseble')
     implementation project(path: ':baserecordaudio')
     implementation project(path: ':basepermission')
+    implementation project(path: ':baseqrcode')
     implementation project(path: ':providespeechrecognizer')
 
 
