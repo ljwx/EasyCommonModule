@@ -14,7 +14,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.ljwx.baseqrcode.preview.BaseCameraPreviewProvider
 import com.ljwx.baseqrcode.recognition.BaseQRCodeScannerProvider
 
-open class BaseQRCodeTestActivity : AppCompatActivity() {
+open class BaseQRCodeScannerTestActivity : AppCompatActivity() {
 
     companion object {
         fun qrLog(content: String) {

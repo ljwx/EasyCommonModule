@@ -2,13 +2,13 @@ package com.ljwx.basemodule
 
 import android.Manifest
 import android.app.Activity
-import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.ljwx.baseapp.extensions.showToast
 import com.ljwx.basemodulev2.test.BaseModuleTestActivity
-import com.ljwx.baseqrcode.BaseQRCodeTestActivity
+import com.ljwx.baseqrcode.BaseQRCodeScannerTestActivity
+import com.ljwx.baseqrcodegenerator.BaseQRCodeGeneratorTestActivity
 import com.ljwx.provide.speechrecognizer.HmsSpeechRecognizer
 
 object FeatureTest {
@@ -42,7 +42,8 @@ object FeatureTest {
 
     fun testClick(activity: MainActivity) {
 //        testModuleV2(activity)
-        startQrCode(activity)
+//        startQrCode(activity)
+        generatorQRCode(activity)
     }
 
     fun testPermissions(activity: MainActivity) {
@@ -73,7 +74,11 @@ object FeatureTest {
     }
 
     fun startQrCode(activity: MainActivity) {
-        activity.startActivity(BaseQRCodeTestActivity::class.java, requestCode = 3333)
+        activity.startActivity(BaseQRCodeScannerTestActivity::class.java, requestCode = 3333)
+    }
+
+    fun generatorQRCode(activity: MainActivity) {
+        BaseQRCodeGeneratorTestActivity.startActivity(activity, "二维码展示", 600)
     }
 
 }

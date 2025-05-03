@@ -31,7 +31,8 @@
             <option value="$PROJECT_DIR$/basenotification" />
             <option value="$PROJECT_DIR$/baseosdiff" />
             <option value="$PROJECT_DIR$/basepermission" />
-            <option value="$PROJECT_DIR$/baseqrcode" />
+            <option value="$PROJECT_DIR$/baseqrcodegenerator" />
+            <option value="$PROJECT_DIR$/baseqrcodescaner" />
             <option value="$PROJECT_DIR$/baserecordaudio" />
             <option value="$PROJECT_DIR$/baserecyclerview" />
             <option value="$PROJECT_DIR$/baserefresh" />
