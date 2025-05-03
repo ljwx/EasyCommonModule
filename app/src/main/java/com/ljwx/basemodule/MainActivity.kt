@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.ActivityResultCallback
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.ljwx.baseactivity.fast.QuickMainActivity
@@ -96,5 +97,12 @@ class MainActivity :
     }
 
     override fun enableKeyboardHeightListener() = true
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 3333) {
+            Log.d("qrCode", "返回的结果："+data?.getStringExtra("codeResult"))
+        }
+    }
 
 }

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.ljwx.mylibrary'
+    namespace 'com.ljwx.baseqrcode'
     compileSdk 34
 
     defaultConfig {

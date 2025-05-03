@@ -1,4 +1,4 @@
-package com.ljwx.mylibrary.preview
+package com.ljwx.baseqrcode.preview
 
 import android.annotation.SuppressLint
 import android.content.Context

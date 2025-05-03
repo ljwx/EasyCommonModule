@@ -1,4 +1,4 @@
-package com.ljwx.mylibrary.recognition
+package com.ljwx.baseqrcode.recognition
 
 import android.util.Log
 import com.google.mlkit.vision.barcode.BarcodeScanner

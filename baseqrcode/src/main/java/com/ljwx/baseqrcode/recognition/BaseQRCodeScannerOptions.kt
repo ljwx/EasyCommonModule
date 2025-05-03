@@ -1,4 +1,4 @@
-package com.ljwx.mylibrary.recognition
+package com.ljwx.baseqrcode.recognition
 
 import com.google.mlkit.vision.barcode.common.Barcode.BarcodeFormat
 

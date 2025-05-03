@@ -2,12 +2,13 @@ package com.ljwx.basemodule
 
 import android.Manifest
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.ljwx.baseapp.extensions.showToast
 import com.ljwx.basemodulev2.test.BaseModuleTestActivity
-import com.ljwx.mylibrary.GQRCodeTestActivity
+import com.ljwx.baseqrcode.BaseQRCodeTestActivity
 import com.ljwx.provide.speechrecognizer.HmsSpeechRecognizer
 
 object FeatureTest {
@@ -72,7 +73,7 @@ object FeatureTest {
     }
 
     fun startQrCode(activity: MainActivity) {
-        activity.startActivity(GQRCodeTestActivity::class.java)
+        activity.startActivity(BaseQRCodeTestActivity::class.java, requestCode = 3333)
     }
 
 }
