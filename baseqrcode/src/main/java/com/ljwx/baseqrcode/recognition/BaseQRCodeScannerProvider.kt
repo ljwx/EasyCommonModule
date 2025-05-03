@@ -54,6 +54,10 @@ class BaseQRCodeScannerProvider {
         Log.d("qrCodeRecognition", content)
     }
 
+    fun onDestroy() {
+        scanner = null
+    }
+
     interface ScannerRecognitionListener {
         fun onSuccess(value: String)
         fun onFailure()

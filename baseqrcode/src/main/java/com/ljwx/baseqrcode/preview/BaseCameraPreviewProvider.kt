@@ -110,6 +110,11 @@ class BaseCameraPreviewProvider(
         Log.d("qrCodePreview", content)
     }
 
+    fun onDestroy() {
+        imageProxy = null
+        cameraExecutor.shutdown()
+    }
+
     interface CameraPreviewListener {
         fun onFailure(code: Int, message: String)
         fun onSuccess(mediaImage: InputImage?)

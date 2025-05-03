@@ -116,4 +116,10 @@ open class BaseQRCodeTestActivity : AppCompatActivity() {
         finish()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        preview.onDestroy()
+        scanner.onDestroy()
+    }
+
 }
