@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import com.blankj.utilcode.util.ActivityUtils
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.google.gson.GsonBuilder
-import com.ljwx.baseapp.extensions.lifecycle
 import com.ljwx.baseapp.response.DataResult
 import com.ljwx.baseapp.vm.model.BaseSecondRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -58,18 +57,6 @@ class TestRepository : BaseSecondRepository<TestService, TestService>() {
                 }
             })
         return liveData
-    }
-
-    fun requestTest2() {
-        mGiteeTestRetrofit.create(TestService::class.java).search2("7")
-            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-            .lifecycle()
-            .subscribe(object : QuickObserver3<String>() {
-
-                override fun onResponseSuccess(result: String) {
-
-                }
-            })
     }
 
     override fun createServerSecond(): TestService {

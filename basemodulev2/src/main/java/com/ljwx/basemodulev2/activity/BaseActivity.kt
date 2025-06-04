@@ -75,7 +75,7 @@ open class BaseActivity(@LayoutRes private val layoutResID: Int) : AppCompatActi
     }
 
     override fun hideStatusBar() {
-        windowInsetsController.hide(WindowInsetsCompat.Type.statusBars())
+        windowInsetsController?.hide(WindowInsetsCompat.Type.statusBars())
     }
 
     override fun setStatusBarLight() {
@@ -84,7 +84,7 @@ open class BaseActivity(@LayoutRes private val layoutResID: Int) : AppCompatActi
 
     override fun setStatusBarDark() {
         // 设置状态栏文字为浅色（白色）
-        windowInsetsController.isAppearanceLightStatusBars = false
+        windowInsetsController?.isAppearanceLightStatusBars = false
     }
 
     override fun setStatusBarBackgroundColor(color: Int) {
@@ -95,7 +95,7 @@ open class BaseActivity(@LayoutRes private val layoutResID: Int) : AppCompatActi
 
     override fun setStatusBarFontDark(dark: Boolean) {
         // 状态栏是否亮色
-        windowInsetsController.isAppearanceLightStatusBars = dark
+        windowInsetsController?.isAppearanceLightStatusBars = dark
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 //            window.decorView.setSystemUiVisibility(
 //                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR // 关闭浅色模式（默认白色文字）
@@ -142,7 +142,7 @@ open class BaseActivity(@LayoutRes private val layoutResID: Int) : AppCompatActi
     }
 
     override fun hideNavigationBar() {
-        windowInsetsController.hide(WindowInsetsCompat.Type.navigationBars())
+        windowInsetsController?.hide(WindowInsetsCompat.Type.navigationBars())
     }
 
     override fun getNavigationBarHeight(rootView: View): Int {

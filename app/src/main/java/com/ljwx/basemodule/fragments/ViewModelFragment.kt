@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.lifecycleScope
-import com.ljwx.baseapp.extensions.lifecycle
 import com.ljwx.basefragment.BaseMVVMFragment
 import com.ljwx.basemodule.R
 import com.ljwx.basemodule.databinding.FragmentViewmodelBinding
@@ -27,10 +26,6 @@ class ViewModelFragment :
         mViewModel.requestTest()
 
         mViewModel.getUsers().observe(viewLifecycleOwner){
-
-        }
-
-        Observable.just(1).timeInterval().lifecycle(this).subscribe {
 
         }
 
